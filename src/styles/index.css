@@ -18,6 +18,33 @@
   animation: fade-in 1s ease-out;
 }
 
+/* Glassmorphism Effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Gradient Glow Effect for Buttons */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(255, 107, 53, 0.8);
+  }
+}
+
+.glow-button {
+  animation: glow 2s ease-in-out infinite;
+}
+
 /* Masonry Grid Responsive */
 @media (max-width: 768px) {
   .masonry-grid {
@@ -49,4 +76,9 @@ html {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+/* Dark Page Background Gradient */
+.dark-gradient-bg {
+  background: linear-gradient(180deg, #0A0A0F 0%, #12121A 50%, #0A0A0F 100%);
 }

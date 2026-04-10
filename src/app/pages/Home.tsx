@@ -1,7 +1,5 @@
 import { Play, MapPin, Star } from 'lucide-react';
 import { Hero } from '../components/Hero';
-import { Section } from '../components/Section';
-import { TravelCard } from '../components/TravelCard';
 import { Button } from '../components/Button';
 import { Link } from 'react-router';
 
@@ -113,199 +111,263 @@ export default function Home() {
   ];
 
   return (
-    <div className="pt-20">
+    <div className="pt-20 bg-gradient-to-b from-[#0A0A0F] via-[#12121A] to-[#0A0A0F]">
       {/* Hero Section */}
       <Hero
         image="https://images.unsplash.com/photo-1746309641900-642b45ebecc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaW5lbWF0aWMlMjBsYW5kc2NhcGUlMjB3YW5kZXJsdXN0fGVufDF8fHx8MTc3NTYyNDAwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
         title="Explore the World Through My Journey"
         subtitle="Join me as I discover breathtaking destinations, immerse myself in diverse cultures, and share unforgettable adventures from around the globe."
+        overlay="dark"
       >
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button variant="primary" size="lg">
+          <button className="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white shadow-lg hover:shadow-[0_0_30px_rgba(255,107,53,0.5)] transition-all duration-300 transform hover:scale-105">
             <Play className="w-5 h-5" />
             Watch Videos
-          </Button>
+          </button>
           <Link to="/gallery">
-            <Button variant="outline" size="lg">
+            <button className="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg rounded-xl border-2 border-white/30 text-white backdrop-blur-md bg-white/10 hover:bg-white/20 hover:border-white/50 transition-all duration-300 transform hover:scale-105">
               Explore Gallery
-            </Button>
+            </button>
           </Link>
         </div>
       </Hero>
 
       {/* Featured Destinations */}
-      <Section
-        title="Featured Destinations"
-        subtitle="Explore the most breathtaking places I've visited and get inspired for your next adventure"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {destinations.map((dest) => (
-            <TravelCard
-              key={dest.id}
-              image={dest.image}
-              title={dest.title}
-              description={dest.description}
-            >
-              <div className="flex items-center gap-2 text-[var(--primary)]">
-                <MapPin className="w-4 h-4" />
-                <span className="text-sm">{dest.location}</span>
-              </div>
-            </TravelCard>
-          ))}
-        </div>
-      </Section>
-
-      {/* Featured Videos */}
-      <Section
-        title="Latest Travel Vlogs"
-        subtitle="Watch my recent adventures and travel experiences"
-        background="gray"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {videos.map((video) => (
-            <div
-              key={video.id}
-              className="bg-white rounded-xl overflow-hidden cursor-pointer group transition-all duration-300 hover:shadow-2xl hover:-translate-y-2"
-              style={{ boxShadow: 'var(--shadow-lg)' }}
-            >
-              <div className="relative aspect-video overflow-hidden">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center">
-                    <Play className="w-8 h-8 text-[var(--primary)] ml-1" />
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl mb-4 text-white" style={{ fontWeight: 'var(--font-weight-bold)' }}>
+              Featured Destinations
+            </h2>
+            <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+              Explore the most breathtaking places I've visited and get inspired for your next adventure
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {destinations.map((dest) => (
+              <div
+                key={dest.id}
+                className="group cursor-pointer"
+              >
+                <div className="rounded-xl overflow-hidden backdrop-blur-lg bg-white/5 border border-white/10 transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_8px_30px_rgba(0,119,190,0.3)] hover:-translate-y-2">
+                  <div className="relative overflow-hidden aspect-[4/3]">
+                    <img
+                      src={dest.image}
+                      alt={dest.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl mb-2 text-white">{dest.title}</h3>
+                    <p className="text-gray-400 mb-4 line-clamp-3">{dest.description}</p>
+                    <div className="flex items-center gap-2 text-[#38BDF8]">
+                      <MapPin className="w-4 h-4" />
+                      <span className="text-sm">{dest.location}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 rounded text-sm">
-                  {video.duration}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Videos */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-[#12121A] to-[#1A1A24]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl mb-4 text-white" style={{ fontWeight: 'var(--font-weight-bold)' }}>
+              Latest Travel Vlogs
+            </h2>
+            <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+              Watch my recent adventures and travel experiences
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {videos.map((video) => (
+              <div
+                key={video.id}
+                className="group cursor-pointer"
+              >
+                <div className="rounded-xl overflow-hidden backdrop-blur-lg bg-white/5 border border-white/10 transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_8px_30px_rgba(255,107,53,0.3)] hover:-translate-y-2">
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-16 h-16 rounded-full bg-gradient-to-r from-[#FF6B35] to-[#F7931E] flex items-center justify-center shadow-[0_0_30px_rgba(255,107,53,0.6)]">
+                        <Play className="w-8 h-8 text-white ml-1" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-2 right-2 bg-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm border border-white/20">
+                      {video.duration}
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg mb-2 text-white">{video.title}</h3>
+                    <p className="text-sm text-gray-400">{video.views} views</p>
+                  </div>
                 </div>
               </div>
-              <div className="p-4">
-                <h3 className="text-lg mb-2">{video.title}</h3>
-                <p className="text-sm text-[var(--gray-dark)]">{video.views} views</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <button className="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white shadow-lg hover:shadow-[0_0_30px_rgba(255,107,53,0.5)] transition-all duration-300 transform hover:scale-105">
+              <Play className="w-5 h-5" />
+              View All Videos
+            </button>
+          </div>
         </div>
-        <div className="text-center mt-12">
-          <Button variant="primary" size="lg">
-            <Play className="w-5 h-5" />
-            View All Videos
-          </Button>
-        </div>
-      </Section>
+      </section>
 
       {/* Travel Stories */}
-      <Section
-        title="Latest Travel Stories"
-        subtitle="Read about my adventures, tips, and travel guides"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {stories.map((story) => (
-            <TravelCard
-              key={story.id}
-              image={story.image}
-              title={story.title}
-              description={story.excerpt}
-            >
-              <div className="flex items-center justify-between text-sm text-[var(--gray-dark)]">
-                <span>{story.date}</span>
-                <span>{story.readTime}</span>
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl mb-4 text-white" style={{ fontWeight: 'var(--font-weight-bold)' }}>
+              Latest Travel Stories
+            </h2>
+            <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+              Read about my adventures, tips, and travel guides
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {stories.map((story) => (
+              <div
+                key={story.id}
+                className="group cursor-pointer"
+              >
+                <div className="rounded-xl overflow-hidden backdrop-blur-lg bg-white/5 border border-white/10 transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-[0_8px_30px_rgba(56,189,248,0.3)] hover:-translate-y-2">
+                  <div className="relative overflow-hidden aspect-[4/3]">
+                    <img
+                      src={story.image}
+                      alt={story.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl mb-2 text-white">{story.title}</h3>
+                    <p className="text-gray-400 mb-4 line-clamp-3">{story.excerpt}</p>
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <span>{story.date}</span>
+                      <span>{story.readTime}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </TravelCard>
-          ))}
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <button className="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg rounded-xl border-2 border-white/30 text-white backdrop-blur-md bg-white/10 hover:bg-white/20 hover:border-white/50 transition-all duration-300 transform hover:scale-105">
+              Read All Stories
+            </button>
+          </div>
         </div>
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
-            Read All Stories
-          </Button>
-        </div>
-      </Section>
+      </section>
 
       {/* Upcoming Events Preview */}
-      <Section
-        title="Upcoming Events"
-        subtitle="Join me for live sessions, meetups, and group travel experiences"
-        background="gray"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="bg-white rounded-xl p-8" style={{ boxShadow: 'var(--shadow-lg)' }}>
-            <div className="text-[var(--primary)] text-sm mb-2">April 25, 2026</div>
-            <h3 className="text-2xl mb-4">Live Q&A: Travel Tips & Tricks</h3>
-            <p className="text-[var(--gray-dark)] mb-6">
-              Join me for an interactive session where I'll answer all your travel questions and share insider tips.
+      <section className="py-16 md:py-24 bg-gradient-to-b from-[#1A1A24] to-[#12121A]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl mb-4 text-white" style={{ fontWeight: 'var(--font-weight-bold)' }}>
+              Upcoming Events
+            </h2>
+            <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+              Join me for live sessions, meetups, and group travel experiences
             </p>
-            <Button variant="primary">View Details</Button>
           </div>
-          <div className="bg-white rounded-xl p-8" style={{ boxShadow: 'var(--shadow-lg)' }}>
-            <div className="text-[var(--primary)] text-sm mb-2">May 15, 2026</div>
-            <h3 className="text-2xl mb-4">Group Tour: Iceland Adventure</h3>
-            <p className="text-[var(--gray-dark)] mb-6">
-              Join our exclusive group tour to explore Iceland's stunning landscapes and chase the Northern Lights.
-            </p>
-            <Button variant="primary">Book Now</Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <div className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 p-8 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(255,107,53,0.2)]">
+              <div className="text-[#38BDF8] text-sm mb-2 font-semibold">April 25, 2026</div>
+              <h3 className="text-2xl mb-4 text-white">Live Q&A: Travel Tips & Tricks</h3>
+              <p className="text-gray-400 mb-6">
+                Join me for an interactive session where I'll answer all your travel questions and share insider tips.
+              </p>
+              <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#0077BE] to-[#38BDF8] text-white shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.4)] transition-all duration-300">
+                View Details
+              </button>
+            </div>
+            <div className="rounded-2xl backdrop-blur-lg bg-white/5 border border-white/10 p-8 hover:bg-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(255,107,53,0.2)]">
+              <div className="text-[#FF6B35] text-sm mb-2 font-semibold">May 15, 2026</div>
+              <h3 className="text-2xl mb-4 text-white">Group Tour: Iceland Adventure</h3>
+              <p className="text-gray-400 mb-6">
+                Join our exclusive group tour to explore Iceland's stunning landscapes and chase the Northern Lights.
+              </p>
+              <button className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white shadow-lg hover:shadow-[0_0_20px_rgba(255,107,53,0.4)] transition-all duration-300">
+                Book Now
+              </button>
+            </div>
+          </div>
+          <div className="text-center mt-12">
+            <Link to="/events">
+              <button className="inline-flex items-center justify-center gap-2 px-8 py-4 text-lg rounded-xl border-2 border-white/30 text-white backdrop-blur-md bg-white/10 hover:bg-white/20 hover:border-white/50 transition-all duration-300 transform hover:scale-105">
+                View All Events
+              </button>
+            </Link>
           </div>
         </div>
-        <div className="text-center mt-12">
-          <Link to="/events">
-            <Button variant="outline" size="lg">
-              View All Events
-            </Button>
-          </Link>
-        </div>
-      </Section>
+      </section>
 
       {/* Testimonials */}
-      <Section
-        title="What People Are Saying"
-        subtitle="Hear from the amazing community that follows my journey"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
-            <div
-              key={testimonial.id}
-              className="bg-white rounded-xl p-8 border border-[var(--border)]"
-              style={{ boxShadow: 'var(--shadow-md)' }}
-            >
-              <div className="flex gap-1 mb-4">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-[var(--sunset-orange)] text-[var(--sunset-orange)]" />
-                ))}
+      <section className="py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl mb-4 text-white" style={{ fontWeight: 'var(--font-weight-bold)' }}>
+              What People Are Saying
+            </h2>
+            <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
+              Hear from the amazing community that follows my journey
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial) => (
+              <div
+                key={testimonial.id}
+                className="rounded-xl backdrop-blur-lg bg-white/5 border border-white/10 p-8 hover:bg-white/10 hover:border-white/20 transition-all duration-300"
+              >
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-[#F7931E] text-[#F7931E]" />
+                  ))}
+                </div>
+                <p className="text-gray-300 mb-6 italic">"{testimonial.comment}"</p>
+                <div>
+                  <div className="font-semibold text-white">{testimonial.name}</div>
+                  <div className="text-sm text-gray-500">{testimonial.location}</div>
+                </div>
               </div>
-              <p className="text-[var(--gray-dark)] mb-6 italic">"{testimonial.comment}"</p>
-              <div>
-                <div className="font-semibold">{testimonial.name}</div>
-                <div className="text-sm text-[var(--gray-dark)]">{testimonial.location}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Newsletter CTA */}
-      <Section background="dark">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl mb-4" style={{ fontWeight: 'var(--font-weight-bold)' }}>
-            Never Miss an Adventure
-          </h2>
-          <p className="text-lg text-gray-300 mb-8">
-            Subscribe to get the latest travel stories, tips, and exclusive content delivered to your inbox.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-6 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-gray-400 focus:outline-none focus:border-[var(--primary)]"
-            />
-            <Button variant="secondary" size="md">
-              Subscribe
-            </Button>
+            ))}
           </div>
         </div>
-      </Section>
+      </section>
+
+      {/* Newsletter CTA */}
+      <section className="py-16 md:py-24 bg-gradient-to-r from-[#0A0A0F] via-[#1A1A24] to-[#0A0A0F] border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl mb-4 text-white" style={{ fontWeight: 'var(--font-weight-bold)' }}>
+              Never Miss an Adventure
+            </h2>
+            <p className="text-lg text-gray-400 mb-8">
+              Subscribe to get the latest travel stories, tips, and exclusive content delivered to your inbox.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 px-6 py-3 rounded-lg backdrop-blur-md bg-white/10 border border-white/20 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#38BDF8] focus:bg-white/15 transition-all"
+              />
+              <button className="px-8 py-3 rounded-lg bg-gradient-to-r from-[#FF6B35] to-[#F7931E] text-white shadow-lg hover:shadow-[0_0_30px_rgba(255,107,53,0.5)] transition-all duration-300 transform hover:scale-105">
+                Subscribe
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
