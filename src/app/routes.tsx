@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import { ReactNode } from 'react';
 import Home from './pages/Home';
 import Gallery from './pages/Gallery';
+import Vlogs from './pages/Vlogs';
 import Events from './pages/Events';
 import Contact from './pages/Contact';
 import { Navbar } from './components/Navbar';
@@ -35,6 +36,14 @@ export const router = createBrowserRouter([
     element: (
       <Layout>
         <Gallery />
+      </Layout>
+    ),
+  },
+  {
+    path: '/vlogs',
+    element: (
+      <Layout>
+        <Vlogs />
       </Layout>
     ),
   },
