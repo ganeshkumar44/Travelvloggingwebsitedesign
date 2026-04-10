@@ -11,9 +11,8 @@ export function Navbar() {
   const navLinks = [
     { path: "/", label: "Home" },
     { path: "/gallery", label: "Gallery" },
-    { path: "/vlogs", label: "Vlogs" },
-    { path: "/events", label: "Upcoming Events" },
-    { path: "/contact", label: "Contact Us" },
+    { path: "/events", label: "Events" },
+    { path: "/contact", label: "Contact" },
   ];
 
   const isActive = (path: string) => location.pathname === path;

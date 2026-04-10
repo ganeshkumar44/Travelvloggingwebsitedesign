@@ -82,25 +82,3 @@ html {
 .dark-gradient-bg {
   background: linear-gradient(180deg, #0A0A0F 0%, #12121A 50%, #0A0A0F 100%);
 }
-
-/* Prose Styling for Vlog Content */
-.prose {
-  color: var(--gray-dark);
-}
-
-.prose h3 {
-  font-size: 1.5rem;
-  font-weight: var(--font-weight-semibold);
-  color: var(--foreground);
-  margin-top: 2rem;
-  margin-bottom: 1rem;
-}
-
-.prose p {
-  margin-bottom: 1rem;
-  line-height: 1.8;
-}
-
-.prose h3:first-child {
-  margin-top: 0;
-}

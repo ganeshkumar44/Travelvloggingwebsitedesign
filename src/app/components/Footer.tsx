@@ -85,14 +85,6 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  to="/vlogs"
-                  className="text-gray-300 hover:text-[var(--sunset-orange)] transition-colors"
-                >
-                  Vlogs
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/events"
                   className="text-gray-300 hover:text-[var(--sunset-orange)] transition-colors"
                 >
