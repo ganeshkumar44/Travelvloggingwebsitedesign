@@ -7,8 +7,8 @@ export default function Home() {
   const destinations = [
     {
       id: 1,
-      title: "Tawang",
-      location: "Arunachal Pradesh, India",
+      title: "Tawang, Arunachal Pradesh",
+      location: "India",
       image:
         "https://images.unsplash.com/photo-1581665334521-ac9a6f6b4be1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYWxpJTIwdGVtcGxlJTIwdHJhdmVsfGVufDF8fHx8MTc3NTYyMzk5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       description:
@@ -16,8 +16,8 @@ export default function Home() {
     },
     {
       id: 2,
-      title: "Dehradun",
-      location: "Uttarakhand, India",
+      title: "Dehradun, Uttarakhand",
+      location: "India",
       image:
         "https://images.unsplash.com/photo-1676730056228-7e38cbb88edc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW50b3JpbmklMjBncmVlY2UlMjBzdW5zZXR8ZW58MXx8fHwxNzc1NjA5NzQxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       description:
@@ -25,8 +25,8 @@ export default function Home() {
     },
     {
       id: 3,
-      title: "Manali",
-      location: "Himachal Pradesh, India",
+      title: "Manali, Himachal Pradesh",
+      location: "India",
       image:
         "https://images.unsplash.com/photo-1585424483885-79f95609920f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXRhZ29uaWElMjBsYW5kc2NhcGUlMjBnbGFjaWVyfGVufDF8fHx8MTc3NTYyMzk5OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       description:
@@ -34,8 +34,8 @@ export default function Home() {
     },
     {
       id: 4,
-      title: "Nainital",
-      location: "Himachal Pradesh, India",
+      title: "Nainital, Himachal Pradesh",
+      location: "India",
       image:
         "https://images.unsplash.com/photo-1585085007341-a5aadf6e48e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0b2t5byUyMG5pZ2h0JTIwY2l0eXNjYXBlfGVufDF8fHx8MTc3NTU5MTE1N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       description:
@@ -134,8 +134,7 @@ export default function Home() {
     <div className="pt-20 bg-gradient-to-b from-[#0A0A0F] via-[#12121A] to-[#0A0A0F]">
       {/* Hero Section */}
       <Hero
-        // image="https://images.unsplash.com/photo-1746309641900-642b45ebecc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaW5lbWF0aWMlMjBsYW5kc2NhcGUlMjB3YW5kZXJsdXN0fGVufDF8fHx8MTc3NTYyNDAwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
-        image="https://images.unsplash.com/photo-1775824977721-886e4f018413?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        image="https://images.unsplash.com/photo-1746309641900-642b45ebecc7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaW5lbWF0aWMlMjBsYW5kc2NhcGUlMjB3YW5kZXJsdXN0fGVufDF8fHx8MTc3NTYyNDAwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
         title="Explore the World Through My Journey"
         subtitle="Join me as I discover breathtaking destinations, immerse myself in diverse cultures, and share unforgettable adventures from around the globe."
         overlay="dark"
