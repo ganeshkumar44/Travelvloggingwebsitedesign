@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import { ReactNode } from 'react';
 import Home from './pages/Home';
 import Gallery from './pages/Gallery';
+import Stories from './pages/Stories';
 import Vlogs from './pages/Vlogs';
 import Events from './pages/Events';
 import Contact from './pages/Contact';
@@ -36,6 +37,14 @@ export const router = createBrowserRouter([
     element: (
       <Layout>
         <Gallery />
+      </Layout>
+    ),
+  },
+  {
+    path: '/stories',
+    element: (
+      <Layout>
+        <Stories />
       </Layout>
     ),
   },
