@@ -12,6 +12,7 @@ export function Navbar() {
     { path: "/", label: "Home" },
     { path: "/gallery", label: "Gallery" },
     { path: "/stories", label: "Stories" },
+    { path: "/vlogs", label: "Vlogs" },
     { path: "/events", label: "Upcoming Events" },
     { path: "/contact", label: "Contact Us" },
   ];
