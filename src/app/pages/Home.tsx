@@ -136,7 +136,7 @@ export default function Home() {
       <Hero
         image="https://images.unsplash.com/photo-1775824977721-886e4f018413?q=80&w=3174&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         title="Explore the World Through My Journey"
-        subtitle="Join me as I discover breathtaking destinations, immerse myself in diverse cultures, and share unforgettable adventures from around the globe."
+        subtitle="Testing - Join me as I discover breathtaking destinations, immerse myself in diverse cultures, and share unforgettable adventures from around the globe."
         overlay="dark"
       >
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
