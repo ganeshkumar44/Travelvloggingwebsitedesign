@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
-import { Menu, X, Compass } from "lucide-react";
+import { Menu, X, Compass, CircleUserRound } from "lucide-react";
 import { cn } from "./ui/utils";
 
 export function Navbar() {
@@ -19,6 +19,20 @@ export function Navbar() {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+  const isSignInActive = location.pathname === "/sign-in";
+
+  const signInIconClass = cn(
+    "inline-flex shrink-0 items-center justify-center rounded-full p-2.5 transition-all duration-300",
+    "hover:scale-110 active:scale-95",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/35 focus-visible:ring-offset-2",
+    isHomePage
+      ? "text-gray-300 hover:text-[#38BDF8] hover:bg-white/10 focus-visible:ring-[#38BDF8]/40 focus-visible:ring-offset-[#0A0A0F]"
+      : "text-[var(--gray-dark)] hover:text-[var(--primary)] hover:bg-[var(--muted)] focus-visible:ring-offset-white",
+    isSignInActive &&
+      (isHomePage
+        ? "text-[#38BDF8] bg-white/10"
+        : "text-[var(--primary)] bg-[var(--muted)]"),
+  );
 
   return (
     <nav
@@ -48,55 +62,74 @@ export function Navbar() {
             <span className="font-semibold">SafarSangGK</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={cn(
-                  "text-base transition-colors relative py-2",
-                  isActive(link.path)
-                    ? isHomePage
-                      ? "text-white"
-                      : "text-[var(--primary)]"
-                    : isHomePage
-                      ? "text-gray-300 hover:text-white"
-                      : "text-[var(--gray-dark)] hover:text-[var(--primary)]",
-                )}
-              >
-                {link.label}
-                {isActive(link.path) && (
-                  <span
-                    className={cn(
-                      "absolute bottom-0 left-0 right-0 h-0.5",
-                      isHomePage
-                        ? "bg-[#38BDF8]"
-                        : "bg-[var(--primary)]",
-                    )}
-                  />
-                )}
-              </Link>
-            ))}
+          {/* Desktop Navigation + Sign In */}
+          <div className="hidden md:flex items-center gap-6 lg:gap-8">
+            <div className="flex items-center gap-6 lg:gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={cn(
+                    "text-base transition-colors relative py-2",
+                    isActive(link.path)
+                      ? isHomePage
+                        ? "text-white"
+                        : "text-[var(--primary)]"
+                      : isHomePage
+                        ? "text-gray-300 hover:text-white"
+                        : "text-[var(--gray-dark)] hover:text-[var(--primary)]",
+                  )}
+                >
+                  {link.label}
+                  {isActive(link.path) && (
+                    <span
+                      className={cn(
+                        "absolute bottom-0 left-0 right-0 h-0.5",
+                        isHomePage
+                          ? "bg-[#38BDF8]"
+                          : "bg-[var(--primary)]",
+                      )}
+                    />
+                  )}
+                </Link>
+              ))}
+            </div>
+            <Link
+              to="/sign-in"
+              aria-label="Sign in"
+              className={signInIconClass}
+            >
+              <CircleUserRound className="h-6 w-6" strokeWidth={1.75} />
+            </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className={cn(
-              "md:hidden p-2 transition-colors",
-              isHomePage
-                ? "text-gray-300 hover:text-white"
-                : "text-[var(--gray-dark)] hover:text-[var(--primary)]",
-            )}
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+          {/* Mobile: Sign In icon + menu */}
+          <div className="flex items-center gap-1 md:hidden">
+            <Link
+              to="/sign-in"
+              aria-label="Sign in"
+              className={signInIconClass}
+              onClick={() => setIsOpen(false)}
+            >
+              <CircleUserRound className="h-6 w-6" strokeWidth={1.75} />
+            </Link>
+            <button
+              className={cn(
+                "p-2 transition-colors",
+                isHomePage
+                  ? "text-gray-300 hover:text-white"
+                  : "text-[var(--gray-dark)] hover:text-[var(--primary)]",
+              )}
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Navigation */}

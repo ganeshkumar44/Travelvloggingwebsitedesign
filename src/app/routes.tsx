@@ -7,6 +7,7 @@ import Stories from './pages/Stories';
 import Vlogs from './pages/Vlogs';
 import Events from './pages/Events';
 import Contact from './pages/Contact';
+import SignIn from './pages/SignIn';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -70,6 +71,14 @@ export const router = createBrowserRouter([
     element: (
       <Layout>
         <Contact />
+      </Layout>
+    ),
+  },
+  {
+    path: '/sign-in',
+    element: (
+      <Layout>
+        <SignIn />
       </Layout>
     ),
   },
