@@ -10,18 +10,18 @@ export default function Home() {
       title: "Tawang",
       location: "Arunachal Pradesh, India",
       image:
-        "https://images.unsplash.com/photo-1581665334521-ac9a6f6b4be1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxiYWxpJTIwdGVtcGxlJTIwdHJhdmVsfGVufDF8fHx8MTc3NTYyMzk5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+        "https://images.unsplash.com/photo-1776405876721-9cafcc35effd?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       description:
-        "Discover ancient temples, lush rice terraces, and pristine beaches in this tropical paradise.",
+        "Tawang is a scenic Himalayan town in Arunachal Pradesh, located at around 3,000 meters above sea level. Famous for the historic Tawang Monastery, beautiful lakes, snowy mountains, and rich Monpa culture, it is one of Northeast India’s most peaceful and spiritual destinations.",
     },
     {
       id: 2,
-      title: "Dehradun",
-      location: "Uttarakhand, India",
+      title: "Darjeeling",
+      location: "West Bengal, India",
       image:
-        "https://images.unsplash.com/photo-1676730056228-7e38cbb88edc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzYW50b3JpbmklMjBncmVlY2UlMjBzdW5zZXR8ZW58MXx8fHwxNzc1NjA5NzQxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+        "https://images.unsplash.com/photo-1776405876570-63f340cec9e1?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       description:
-        "Experience stunning sunsets, white-washed buildings, and crystal-clear Aegean waters.",
+        'Darjeeling, known as the "Queen of the Hills," is a beautiful hill town in West Bengal. Famous for its tea gardens, the UNESCO-listed Darjeeling Himalayan Railway, and breathtaking views of Mount Kanchenjunga, it is a popular and charming travel destination.',
     },
     {
       id: 3,
@@ -30,7 +30,7 @@ export default function Home() {
       image:
         "https://images.unsplash.com/photo-1585424483885-79f95609920f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXRhZ29uaWElMjBsYW5kc2NhcGUlMjBnbGFjaWVyfGVufDF8fHx8MTc3NTYyMzk5OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       description:
-        "Explore glaciers, towering peaks, and the untamed wilderness of South America.",
+        "Manali is a beautiful hill town in Himachal Pradesh, located in the scenic Kullu Valley. Famous for snow, adventure sports, and mountain views, it is a popular destination for skiing, paragliding, and winter travel. Major attractions include Hidimba Devi Temple, Old Manali, and Solang Valley.",
     },
     {
       id: 4,
@@ -39,7 +39,7 @@ export default function Home() {
       image:
         "https://images.unsplash.com/photo-1585085007341-a5aadf6e48e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0b2t5byUyMG5pZ2h0JTIwY2l0eXNjYXBlfGVufDF8fHx8MTc3NTU5MTE1N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       description:
-        "Immerse yourself in the perfect blend of ancient traditions and modern technology.",
+        'Nainital, known as the "Lake District of India," is a popular hill station in Uttarakhand. Famous for the beautiful Naini Lake, pleasant weather, boating, and the revered Naina Devi Temple, it is one of North India’s most loved travel destinations.',
     },
   ];
 
