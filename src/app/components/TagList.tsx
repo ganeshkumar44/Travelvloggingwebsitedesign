@@ -1,3 +1,4 @@
+import React from "react";
 import { Tag } from 'lucide-react';
 import { cn } from './ui/utils';
 

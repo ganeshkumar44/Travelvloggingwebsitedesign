@@ -1,3 +1,4 @@
+import React from "react";
 import { Play, MapPin, Star } from "lucide-react";
 import { Hero } from "../components/Hero";
 import { Button } from "../components/Button";

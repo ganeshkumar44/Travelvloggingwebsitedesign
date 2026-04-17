@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from 'react';
 import { MapPin, Calendar, BookOpen } from 'lucide-react';
 import { Hero } from '../components/Hero';

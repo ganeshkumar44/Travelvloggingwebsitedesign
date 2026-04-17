@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
 import { Menu, X, Compass } from "lucide-react";

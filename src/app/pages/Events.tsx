@@ -1,3 +1,4 @@
+import React from "react";
 import { Calendar, MapPin, Clock, Users } from 'lucide-react';
 import { Hero } from '../components/Hero';
 import { Section } from '../components/Section';

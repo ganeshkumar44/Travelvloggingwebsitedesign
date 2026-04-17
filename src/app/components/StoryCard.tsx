@@ -1,3 +1,4 @@
+import React from "react";
 import { Calendar, BookOpen } from 'lucide-react';
 import { Button } from './Button';
 import { cn } from './ui/utils';

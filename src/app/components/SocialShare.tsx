@@ -1,3 +1,4 @@
+import React from "react";
 import { Facebook, Twitter, Linkedin, Link2, Share2 } from 'lucide-react';
 import { cn } from './ui/utils';
 
