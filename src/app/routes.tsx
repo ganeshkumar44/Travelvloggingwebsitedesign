@@ -8,9 +8,11 @@ import Vlogs from './pages/Vlogs';
 import Events from './pages/Events';
 import Contact from './pages/Contact';
 import SignIn from './pages/SignIn';
+import Dashboard from './pages/Dashboard';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function Layout({ children }: { children: ReactNode }) {
   return (
@@ -79,6 +81,16 @@ export const router = createBrowserRouter([
     element: (
       <Layout>
         <SignIn />
+      </Layout>
+    ),
+  },
+  {
+    path: '/dashboard',
+    element: (
+      <Layout>
+        <ProtectedRoute>
+          <Dashboard />
+        </ProtectedRoute>
       </Layout>
     ),
   },

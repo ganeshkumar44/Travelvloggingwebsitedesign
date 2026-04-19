@@ -1,12 +1,15 @@
 import React from "react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
-import { Menu, X, Compass, CircleUserRound } from "lucide-react";
+import { Menu, X, Compass } from "lucide-react";
 import { cn } from "./ui/utils";
+import { UserAccountMenu } from "./UserAccountMenu";
+import { useAppSelector } from "../../store/hooks";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const accessToken = useAppSelector((s) => s.auth.accessToken);
   const isHomePage = location.pathname === "/";
 
   const navLinks = [
@@ -19,7 +22,8 @@ export function Navbar() {
   ];
 
   const isActive = (path: string) => location.pathname === path;
-  const isSignInActive = location.pathname === "/sign-in";
+  const isSignInActive =
+    location.pathname === "/sign-in" && !accessToken;
 
   const signInIconClass = cn(
     "inline-flex shrink-0 items-center justify-center rounded-full p-2.5 transition-all duration-300",
@@ -47,12 +51,12 @@ export function Navbar() {
       }
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex h-20 items-center justify-between gap-3">
           {/* Logo */}
           <Link
             to="/"
             className={cn(
-              "flex items-center gap-2 text-2xl transition-colors",
+              "flex shrink-0 items-center gap-2 text-2xl transition-colors",
               isHomePage
                 ? "text-white hover:text-[#38BDF8]"
                 : "text-[var(--primary)] hover:text-[var(--ocean-blue-dark)]",
@@ -62,9 +66,9 @@ export function Navbar() {
             <span className="font-semibold">SafarSangGK</span>
           </Link>
 
-          {/* Desktop Navigation + Sign In */}
-          <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            <div className="flex items-center gap-6 lg:gap-8">
+          <div className="flex min-w-0 flex-1 items-center justify-end gap-2 md:gap-6 lg:gap-8">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-6 lg:gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
@@ -94,28 +98,17 @@ export function Navbar() {
                 </Link>
               ))}
             </div>
-            <Link
-              to="/sign-in"
-              aria-label="Sign in"
-              className={signInIconClass}
-            >
-              <CircleUserRound className="h-6 w-6" strokeWidth={1.75} />
-            </Link>
-          </div>
 
-          {/* Mobile: Sign In icon + menu */}
-          <div className="flex items-center gap-1 md:hidden">
-            <Link
-              to="/sign-in"
-              aria-label="Sign in"
-              className={signInIconClass}
-              onClick={() => setIsOpen(false)}
-            >
-              <CircleUserRound className="h-6 w-6" strokeWidth={1.75} />
-            </Link>
+            <UserAccountMenu
+              isHomePage={isHomePage}
+              iconClassName={signInIconClass}
+              onAfterNavigate={() => setIsOpen(false)}
+            />
+
+            {/* Mobile menu toggle */}
             <button
               className={cn(
-                "p-2 transition-colors",
+                "p-2 transition-colors md:hidden",
                 isHomePage
                   ? "text-gray-300 hover:text-white"
                   : "text-[var(--gray-dark)] hover:text-[var(--primary)]",

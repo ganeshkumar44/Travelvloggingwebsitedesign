@@ -1,11 +1,30 @@
-import React, { FormEvent } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { FormTextField } from "../components/FormTextField";
 import { Button } from "../components/Button";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { clearLoginError, loginUser } from "../../features/auth/authSlice";
 
 export default function SignIn() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { status, error, accessToken } = useAppSelector((s) => s.auth);
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (accessToken) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [accessToken, navigate]);
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    void dispatch(loginUser({ email, password }));
   };
+
+  const isLoading = status === "loading";
 
   return (
     <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-[var(--gray-light)] via-white to-[var(--gray-light)]">
@@ -21,11 +40,18 @@ export default function SignIn() {
             noValidate
           >
             <FormTextField
-              id="signin-username"
-              name="username"
-              label="Username"
-              placeholder="Enter your username"
-              autoComplete="username"
+              id="signin-email"
+              name="email"
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (error) dispatch(clearLoginError());
+              }}
+              disabled={isLoading}
             />
             <FormTextField
               id="signin-password"
@@ -34,10 +60,31 @@ export default function SignIn() {
               type="password"
               placeholder="Enter your password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) dispatch(clearLoginError());
+              }}
+              disabled={isLoading}
             />
+
+            {error ? (
+              <p
+                className="text-sm font-medium text-[var(--destructive)]"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
+
             <div className="pt-1">
-              <Button type="submit" className="w-full" size="lg">
-                Submit
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing in…" : "Submit"}
               </Button>
             </div>
           </form>
