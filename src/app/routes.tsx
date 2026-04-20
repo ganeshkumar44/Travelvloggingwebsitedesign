@@ -8,6 +8,8 @@ import Vlogs from './pages/Vlogs';
 import Events from './pages/Events';
 import Contact from './pages/Contact';
 import SignIn from './pages/SignIn';
+import Register from './pages/Register';
+import RegisterOtp from './pages/RegisterOtp';
 import Dashboard from './pages/Dashboard';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -81,6 +83,22 @@ export const router = createBrowserRouter([
     element: (
       <Layout>
         <SignIn />
+      </Layout>
+    ),
+  },
+  {
+    path: '/register',
+    element: (
+      <Layout>
+        <Register />
+      </Layout>
+    ),
+  },
+  {
+    path: '/register-otp',
+    element: (
+      <Layout>
+        <RegisterOtp />
       </Layout>
     ),
   },

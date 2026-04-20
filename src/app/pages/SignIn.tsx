@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { FormTextField } from "../components/FormTextField";
 import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -103,12 +103,12 @@ export default function SignIn() {
             >
               Forgot password?
             </button>
-            <button
-              type="button"
+            <Link
+              to="/register"
               className="text-left text-sm font-medium text-[var(--primary)] transition-colors hover:text-[var(--ocean-blue-dark)] hover:underline sm:text-right"
             >
               Register
-            </button>
+            </Link>
           </div>
         </div>
       </div>
