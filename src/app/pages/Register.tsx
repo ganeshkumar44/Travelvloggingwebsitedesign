@@ -1,7 +1,20 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { FormTextField } from "../components/FormTextField";
 import { Button } from "../components/Button";
 import { cn } from "../components/ui/utils";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  clearRegisterFieldError,
+  resetRegisterState,
+  setRegisterFieldErrors,
+  registerUser,
+} from "../../features/register/registerSlice";
+import type { RegisterRequest } from "../../features/register/registerTypes";
+import {
+  hasValidationErrors,
+  validateRegisterForm,
+} from "../../features/register/registerValidation";
 
 const genderOptions = [
   { value: "Male", label: "Male" },
@@ -10,6 +23,10 @@ const genderOptions = [
 ] as const;
 
 export default function Register() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { status, apiError, fieldErrors } = useAppSelector((s) => s.register);
+
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -18,8 +35,32 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [gender, setGender] = useState("");
 
+  const isLoading = status === "loading";
+
+  useEffect(() => {
+    if (status === "succeeded") {
+      navigate("/register-otp", { replace: true });
+      dispatch(resetRegisterState());
+    }
+  }, [status, navigate, dispatch]);
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const payload: RegisterRequest = {
+      firstname,
+      lastname,
+      email,
+      phone,
+      password,
+      confirm_password: confirmPassword,
+      gender,
+    };
+    const errors = validateRegisterForm(payload);
+    if (hasValidationErrors(errors)) {
+      dispatch(setRegisterFieldErrors(errors));
+      return;
+    }
+    void dispatch(registerUser(payload));
   };
 
   return (
@@ -42,7 +83,12 @@ export default function Register() {
               placeholder="Enter your first name"
               autoComplete="given-name"
               value={firstname}
-              onChange={(e) => setFirstname(e.target.value)}
+              onChange={(e) => {
+                setFirstname(e.target.value);
+                dispatch(clearRegisterFieldError("firstname"));
+              }}
+              disabled={isLoading}
+              error={fieldErrors.firstname}
             />
             <FormTextField
               id="register-lastname"
@@ -51,7 +97,12 @@ export default function Register() {
               placeholder="Enter your last name"
               autoComplete="family-name"
               value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
+              onChange={(e) => {
+                setLastname(e.target.value);
+                dispatch(clearRegisterFieldError("lastname"));
+              }}
+              disabled={isLoading}
+              error={fieldErrors.lastname}
             />
             <FormTextField
               id="register-email"
@@ -61,7 +112,12 @@ export default function Register() {
               placeholder="Enter your email"
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                dispatch(clearRegisterFieldError("email"));
+              }}
+              disabled={isLoading}
+              error={fieldErrors.email}
             />
             <FormTextField
               id="register-phone"
@@ -71,7 +127,12 @@ export default function Register() {
               placeholder="Enter your phone number"
               autoComplete="tel"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                dispatch(clearRegisterFieldError("phone"));
+              }}
+              disabled={isLoading}
+              error={fieldErrors.phone}
             />
             <FormTextField
               id="register-password"
@@ -81,7 +142,13 @@ export default function Register() {
               placeholder="Enter your password"
               autoComplete="new-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                dispatch(clearRegisterFieldError("password"));
+                dispatch(clearRegisterFieldError("confirm_password"));
+              }}
+              disabled={isLoading}
+              error={fieldErrors.password}
             />
             <FormTextField
               id="register-confirm-password"
@@ -91,10 +158,15 @@ export default function Register() {
               placeholder="Confirm your password"
               autoComplete="new-password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                dispatch(clearRegisterFieldError("confirm_password"));
+              }}
+              disabled={isLoading}
+              error={fieldErrors.confirm_password}
             />
 
-            <fieldset className="space-y-3">
+            <fieldset className="space-y-2">
               <legend className="mb-1 block text-sm font-medium text-[var(--gray-dark)]">
                 Gender
               </legend>
@@ -109,21 +181,48 @@ export default function Register() {
                       name="gender"
                       value={opt.value}
                       checked={gender === opt.value}
-                      onChange={() => setGender(opt.value)}
+                      onChange={() => {
+                        setGender(opt.value);
+                        dispatch(clearRegisterFieldError("gender"));
+                      }}
+                      disabled={isLoading}
                       className={cn(
                         "h-4 w-4 shrink-0 border-[var(--border)] text-[var(--primary)]",
                         "focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/25",
+                        "disabled:cursor-not-allowed disabled:opacity-50",
                       )}
                     />
                     <span>{opt.label}</span>
                   </label>
                 ))}
               </div>
+              {fieldErrors.gender ? (
+                <p
+                  className="text-sm font-medium text-[var(--destructive)]"
+                  role="alert"
+                >
+                  {fieldErrors.gender}
+                </p>
+              ) : null}
             </fieldset>
 
+            {apiError ? (
+              <p
+                className="text-sm font-medium text-[var(--destructive)]"
+                role="alert"
+              >
+                {apiError}
+              </p>
+            ) : null}
+
             <div className="pt-1">
-              <Button type="submit" className="w-full" size="lg">
-                Submit
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={isLoading}
+              >
+                {isLoading ? "Submitting…" : "Submit"}
               </Button>
             </div>
           </form>
