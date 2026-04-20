@@ -3,7 +3,11 @@ import { useNavigate } from "react-router";
 import { FormTextField } from "../components/FormTextField";
 import { Button } from "../components/Button";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { clearLoginError, loginUser } from "../../features/auth/authSlice";
+import {
+  clearLoginError,
+  fetchUserProfile,
+  loginUser,
+} from "../../features/auth/authSlice";
 
 export default function SignIn() {
   const dispatch = useAppDispatch();
@@ -19,9 +23,12 @@ export default function SignIn() {
     }
   }, [accessToken, navigate]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    void dispatch(loginUser({ email, password }));
+    const result = await dispatch(loginUser({ email, password }));
+    if (loginUser.fulfilled.match(result)) {
+      void dispatch(fetchUserProfile(result.payload.access_token));
+    }
   };
 
   const isLoading = status === "loading";

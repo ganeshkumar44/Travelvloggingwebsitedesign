@@ -1,11 +1,17 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { AuthState, LoginRequest, LoginUserResult } from "./authTypes";
+import type {
+  AuthState,
+  LoginRequest,
+  LoginResponse,
+  ProfileResponse,
+} from "./authTypes";
 import {
   clearAuthSession,
   readAuthFromSession,
   writeAuthToSession,
+  writeProfileToSession,
 } from "./authSession";
-import { loginWithProfile } from "./authApi";
+import { fetchProfileApi, loginApi } from "./authApi";
 
 const persisted = readAuthFromSession();
 
@@ -16,17 +22,42 @@ const initialState: AuthState = {
   firstname: persisted.firstname,
   lastname: persisted.lastname,
   fullName: persisted.fullName,
+  role: persisted.role,
   status: "idle",
   error: null,
 };
 
+function capitalize(value: string | undefined): string {
+  const v = (value ?? "").trim();
+  if (!v) return "";
+  return v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+}
+
+function makeFullName(firstname: string | undefined, lastname: string | undefined): string {
+  return `${capitalize(firstname)} ${capitalize(lastname)}`.trim();
+}
+
 export const loginUser = createAsyncThunk<
-  LoginUserResult,
+  LoginResponse,
   LoginRequest,
   { rejectValue: string }
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
-    return await loginWithProfile(credentials);
+    return await loginApi(credentials);
+  } catch (e) {
+    const message =
+      e instanceof Error ? e.message : "Network error. Please try again.";
+    return rejectWithValue(message);
+  }
+});
+
+export const fetchUserProfile = createAsyncThunk<
+  ProfileResponse,
+  string,
+  { rejectValue: string }
+>("auth/fetchUserProfile", async (accessToken, { rejectWithValue }) => {
+  try {
+    return await fetchProfileApi(accessToken);
   } catch (e) {
     const message =
       e instanceof Error ? e.message : "Network error. Please try again.";
@@ -46,6 +77,7 @@ const authSlice = createSlice({
       state.firstname = null;
       state.lastname = null;
       state.fullName = null;
+      state.role = null;
       state.status = "idle";
       state.error = null;
     },
@@ -65,9 +97,10 @@ const authSlice = createSlice({
         state.accessToken = action.payload.access_token;
         state.tokenType = action.payload.token_type;
         state.userEmail = email;
-        state.firstname = action.payload.firstname;
-        state.lastname = action.payload.lastname;
-        state.fullName = action.payload.fullName;
+        state.firstname = null;
+        state.lastname = null;
+        state.fullName = email;
+        state.role = null;
         state.status = "succeeded";
         state.error = null;
       })
@@ -77,6 +110,31 @@ const authSlice = createSlice({
           typeof action.payload === "string"
             ? action.payload
             : "Login failed";
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        const profileEmail = (action.payload.email ?? "").trim();
+        const fallbackEmail = profileEmail || state.userEmail || "";
+        const fullName = makeFullName(
+          action.payload.firstname,
+          action.payload.lastname,
+        );
+        const displayName = fullName || fallbackEmail;
+
+        state.firstname = capitalize(action.payload.firstname) || null;
+        state.lastname = capitalize(action.payload.lastname) || null;
+        state.fullName = displayName || null;
+        state.userEmail = fallbackEmail || null;
+        state.role = action.payload.role ?? null;
+
+        if (state.userEmail) {
+          writeProfileToSession({
+            firstname: state.firstname,
+            lastname: state.lastname,
+            fullName: state.fullName ?? state.userEmail,
+            email: state.userEmail,
+            role: state.role,
+          });
+        }
       });
   },
 });
