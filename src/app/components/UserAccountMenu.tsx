@@ -18,7 +18,7 @@ export function UserAccountMenu({
 }: UserAccountMenuProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { accessToken, userEmail } = useAppSelector((s) => s.auth);
+  const { accessToken, userEmail, fullName } = useAppSelector((s) => s.auth);
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -36,6 +36,9 @@ export function UserAccountMenu({
     document.addEventListener("mousedown", handlePointerDown);
     return () => document.removeEventListener("mousedown", handlePointerDown);
   }, []);
+
+  const displayName =
+    (fullName && fullName.trim()) || (userEmail && userEmail.trim()) || "—";
 
   const handleSignOut = () => {
     dispatch(logout());
@@ -86,9 +89,9 @@ export function UserAccountMenu({
                 ? "border-white/10 text-gray-200"
                 : "border-[var(--border)] text-[var(--gray-dark)]",
             )}
-            title={userEmail ?? ""}
+            title={displayName}
           >
-            {userEmail ?? "—"}
+            {displayName}
           </div>
           <button
             type="button"

@@ -1,11 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { AuthState, LoginRequest, LoginResponse } from "./authTypes";
+import type { AuthState, LoginRequest, LoginUserResult } from "./authTypes";
 import {
   clearAuthSession,
   readAuthFromSession,
   writeAuthToSession,
 } from "./authSession";
-import { loginApi } from "./authApi";
+import { loginWithProfile } from "./authApi";
 
 const persisted = readAuthFromSession();
 
@@ -13,17 +13,20 @@ const initialState: AuthState = {
   accessToken: persisted.accessToken,
   tokenType: persisted.tokenType,
   userEmail: persisted.userEmail,
+  firstname: persisted.firstname,
+  lastname: persisted.lastname,
+  fullName: persisted.fullName,
   status: "idle",
   error: null,
 };
 
 export const loginUser = createAsyncThunk<
-  LoginResponse,
+  LoginUserResult,
   LoginRequest,
   { rejectValue: string }
 >("auth/loginUser", async (credentials, { rejectWithValue }) => {
   try {
-    return await loginApi(credentials);
+    return await loginWithProfile(credentials);
   } catch (e) {
     const message =
       e instanceof Error ? e.message : "Network error. Please try again.";
@@ -40,6 +43,9 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.tokenType = null;
       state.userEmail = null;
+      state.firstname = null;
+      state.lastname = null;
+      state.fullName = null;
       state.status = "idle";
       state.error = null;
     },
@@ -59,6 +65,9 @@ const authSlice = createSlice({
         state.accessToken = action.payload.access_token;
         state.tokenType = action.payload.token_type;
         state.userEmail = email;
+        state.firstname = action.payload.firstname;
+        state.lastname = action.payload.lastname;
+        state.fullName = action.payload.fullName;
         state.status = "succeeded";
         state.error = null;
       })
