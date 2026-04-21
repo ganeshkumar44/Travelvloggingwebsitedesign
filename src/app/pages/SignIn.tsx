@@ -97,12 +97,12 @@ export default function SignIn() {
           </form>
 
           <div className="mt-8 flex flex-col gap-3 border-t border-[var(--border)] pt-6 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-            <button
-              type="button"
+            <Link
+              to="/forgot-password"
               className="text-left text-sm font-medium text-[var(--primary)] transition-colors hover:text-[var(--ocean-blue-dark)] hover:underline sm:text-left"
             >
               Forgot password?
-            </button>
+            </Link>
             <Link
               to="/register"
               className="text-left text-sm font-medium text-[var(--primary)] transition-colors hover:text-[var(--ocean-blue-dark)] hover:underline sm:text-right"

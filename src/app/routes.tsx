@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import SignIn from './pages/SignIn';
 import Register from './pages/Register';
 import RegisterOtp from './pages/RegisterOtp';
+import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -83,6 +84,22 @@ export const router = createBrowserRouter([
     element: (
       <Layout>
         <SignIn />
+      </Layout>
+    ),
+  },
+  {
+    path: '/login',
+    element: (
+      <Layout>
+        <SignIn />
+      </Layout>
+    ),
+  },
+  {
+    path: '/forgot-password',
+    element: (
+      <Layout>
+        <ForgotPassword />
       </Layout>
     ),
   },
