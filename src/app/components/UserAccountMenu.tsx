@@ -82,17 +82,23 @@ export function UserAccountMenu({
           )}
           role="menu"
         >
-          <div
+          <Link
+            to="/dashboard"
+            role="menuitem"
             className={cn(
-              "truncate border-b px-4 py-3 text-sm",
+              "block w-full truncate border-b px-4 py-3 text-left text-sm transition-colors",
               isHomePage
-                ? "border-white/10 text-gray-200"
-                : "border-[var(--border)] text-[var(--gray-dark)]",
+                ? "border-white/10 text-gray-200 hover:bg-white/10 hover:text-white"
+                : "border-[var(--border)] text-[var(--gray-dark)] hover:bg-[var(--muted)] hover:text-[var(--primary)]",
             )}
             title={displayName}
+            onClick={() => {
+              setOpen(false);
+              onAfterNavigate?.();
+            }}
           >
             {displayName}
-          </div>
+          </Link>
           <button
             type="button"
             role="menuitem"
