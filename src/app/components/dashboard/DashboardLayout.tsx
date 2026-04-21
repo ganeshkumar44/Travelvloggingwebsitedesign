@@ -86,7 +86,7 @@ export default function DashboardLayout() {
           <aside
             id="dashboard-sidebar-panel"
             className={cn(
-              "fixed left-0 top-20 z-40 h-[calc(100dvh-5rem)] w-[min(18rem,88vw)] overflow-y-auto rounded-r-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-xl)] transition-transform duration-200 ease-out lg:static lg:z-0 lg:h-auto lg:max-h-none lg:w-64 lg:shrink-0 lg:translate-x-0 lg:rounded-2xl lg:shadow-[var(--shadow-sm)]",
+              "fixed left-0 top-20 z-40 h-[calc(100dvh-5rem)] w-[min(18rem,88vw)] overflow-y-auto border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-xl)] transition-transform duration-200 ease-out lg:static lg:z-0 lg:h-auto lg:max-h-none lg:w-64 lg:shrink-0 lg:translate-x-0 lg:shadow-[var(--shadow-sm)]",
               mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
             )}
           >
@@ -111,7 +111,7 @@ export default function DashboardLayout() {
             />
           </aside>
 
-          <main className="min-w-0 flex-1 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)] sm:p-8 lg:min-h-[480px]">
+          <main className="min-w-0 flex-1 border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)] sm:p-8 lg:min-h-[480px]">
             {renderSection(activeId)}
           </main>
         </div>
