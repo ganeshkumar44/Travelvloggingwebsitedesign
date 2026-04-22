@@ -12,7 +12,7 @@ export function AccountsSection() {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-semibold tracking-tight text-[var(--foreground)]">
-          Accounts
+          Change Password
         </h2>
         <p className="mt-1 text-sm text-[var(--muted-foreground)]">
           Manage your sign-in email and password.

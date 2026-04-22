@@ -83,7 +83,7 @@ export function UserAccountMenu({
           role="menu"
         >
           <Link
-            to="/dashboard"
+            to="/dashboard?tab=dashboard"
             role="menuitem"
             className={cn(
               "block w-full truncate border-b px-4 py-3 text-left text-sm transition-colors",
@@ -98,6 +98,22 @@ export function UserAccountMenu({
             }}
           >
             {displayName}
+          </Link>
+          <Link
+            to="/dashboard?tab=profile"
+            role="menuitem"
+            className={cn(
+              "block w-full border-b px-4 py-3 text-left text-sm font-medium transition-colors",
+              isHomePage
+                ? "border-white/10 text-white hover:bg-white/10"
+                : "border-[var(--border)] text-[var(--gray-dark)] hover:bg-[var(--muted)] hover:text-[var(--primary)]",
+            )}
+            onClick={() => {
+              setOpen(false);
+              onAfterNavigate?.();
+            }}
+          >
+            Accounts Setting
           </Link>
           <button
             type="button"

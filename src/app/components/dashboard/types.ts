@@ -1,8 +1,28 @@
-export type DashboardNavId = "profile" | "accounts" | "stories" | "users";
+export type DashboardNavId =
+  | "dashboard"
+  | "stories"
+  | "profile"
+  | "accounts"
+  | "closeAccount"
+  | "users";
 
-export interface DashboardNavItemConfig {
+export type DashboardNavLeaf = {
+  type: "item";
   id: DashboardNavId;
   label: string;
-  /** When true, item is only shown to admin users */
   adminOnly?: boolean;
+};
+
+export type DashboardNavGroup = {
+  type: "group";
+  label: string;
+  children: { id: DashboardNavId; label: string; adminOnly?: boolean }[];
+};
+
+export type DashboardNavNode = DashboardNavLeaf | DashboardNavGroup;
+
+export function isDashboardNavGroup(
+  node: DashboardNavNode,
+): node is DashboardNavGroup {
+  return node.type === "group";
 }

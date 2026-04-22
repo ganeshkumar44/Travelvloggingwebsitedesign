@@ -1,48 +1,86 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useSearchParams } from "react-router";
 import { useAppSelector } from "../../../store/hooks";
 import { cn } from "../ui/utils";
-import { DASHBOARD_NAV_ITEMS } from "./dashboardNav";
+import { getVisibleNavStructure, isDashboardTabValue } from "./dashboardNav";
 import { isAdminRole } from "./dashboardUtils";
 import { DashboardSidebar } from "./DashboardSidebar";
 import type { DashboardNavId } from "./types";
 import { AccountsSection } from "./sections/AccountsSection";
+import { CloseAccountSection } from "./sections/CloseAccountSection";
+import { DashboardHomeSection } from "./sections/DashboardHomeSection";
 import { ProfileDetailsSection } from "./sections/ProfileDetailsSection";
 import { StoriesSection } from "./sections/StoriesSection";
 import { UsersSection } from "./sections/UsersSection";
 
 function renderSection(id: DashboardNavId) {
   switch (id) {
+    case "dashboard":
+      return <DashboardHomeSection />;
     case "profile":
       return <ProfileDetailsSection />;
     case "accounts":
       return <AccountsSection />;
+    case "closeAccount":
+      return <CloseAccountSection />;
     case "stories":
       return <StoriesSection />;
     case "users":
       return <UsersSection />;
     default:
-      return <ProfileDetailsSection />;
+      return <DashboardHomeSection />;
   }
 }
 
 export default function DashboardLayout() {
   const role = useAppSelector((s) => s.auth.role);
   const isAdmin = useMemo(() => isAdminRole(role), [role]);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [activeId, setActiveId] = useState<DashboardNavId>(() => {
+    if (typeof window === "undefined") return "dashboard";
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    if (tab && isDashboardTabValue(tab)) {
+      return tab;
+    }
+    return "dashboard";
+  });
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const visibleNav = useMemo(
-    () => DASHBOARD_NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin),
+    () => getVisibleNavStructure(isAdmin),
     [isAdmin],
   );
 
-  const [activeId, setActiveId] = useState<DashboardNavId>("profile");
-  const [mobileOpen, setMobileOpen] = useState(false);
-
   useEffect(() => {
     if (activeId === "users" && !isAdmin) {
-      setActiveId("profile");
+      setActiveId("dashboard");
     }
   }, [activeId, isAdmin]);
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if (tab == null) return;
+    if (!isDashboardTabValue(tab)) {
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("tab");
+        return next;
+      }, { replace: true });
+      return;
+    }
+    if (tab === "users" && !isAdmin) {
+      setActiveId("dashboard");
+    } else {
+      setActiveId(tab);
+    }
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete("tab");
+      return next;
+    }, { replace: true });
+  }, [searchParams, isAdmin, setSearchParams]);
 
   const handleSelect = (id: DashboardNavId) => {
     setActiveId(id);
