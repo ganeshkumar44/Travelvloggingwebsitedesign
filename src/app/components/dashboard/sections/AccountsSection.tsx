@@ -20,7 +20,7 @@ export function AccountsSection() {
       </div>
 
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-[var(--shadow-sm)]">
-        <div className="grid max-w-xl gap-6">
+        <div className="grid max-w-full gap-6">
           <DashboardTextField
             id="dash-accounts-email"
             label="Email ID"

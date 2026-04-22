@@ -567,7 +567,7 @@ export function ProfileDetailsSection() {
               <ViewField label="Email" value={serverProfile.email} isLink={false} />
             ) : null}
             {serverProfile.email ? (
-              <div className="mb-6 mt-4 h-px w-full max-w-xl bg-[var(--border)]" />
+              <div className="mb-6 mt-4 h-px w-full bg-[var(--border)]" />
             ) : null}
             <div
               className={cn(
