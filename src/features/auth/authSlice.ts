@@ -23,6 +23,9 @@ const initialState: AuthState = {
   lastname: persisted.lastname,
   fullName: persisted.fullName,
   role: persisted.role,
+  serverProfile: null,
+  profileFetchStatus: "idle",
+  profileFetchError: null,
   status: "idle",
   error: null,
 };
@@ -78,6 +81,9 @@ const authSlice = createSlice({
       state.lastname = null;
       state.fullName = null;
       state.role = null;
+      state.serverProfile = null;
+      state.profileFetchStatus = "idle";
+      state.profileFetchError = null;
       state.status = "idle";
       state.error = null;
     },
@@ -111,7 +117,15 @@ const authSlice = createSlice({
             ? action.payload
             : "Login failed";
       })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.profileFetchStatus = "loading";
+        state.profileFetchError = null;
+      })
       .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.serverProfile = action.payload;
+        state.profileFetchStatus = "succeeded";
+        state.profileFetchError = null;
+
         const profileEmail = (action.payload.email ?? "").trim();
         const fallbackEmail = profileEmail || state.userEmail || "";
         const fullName = makeFullName(
@@ -135,6 +149,13 @@ const authSlice = createSlice({
             role: state.role,
           });
         }
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.profileFetchStatus = "failed";
+        state.profileFetchError =
+          typeof action.payload === "string"
+            ? action.payload
+            : "Failed to load profile";
       });
   },
 });

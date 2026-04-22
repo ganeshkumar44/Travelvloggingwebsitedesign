@@ -14,11 +14,25 @@ export interface ProfileResponse {
   message?: string;
   firstname?: string;
   lastname?: string;
+  username?: string | null;
   email?: string;
-  phone?: string;
-  gender?: string;
+  phone?: string | null;
+  gender?: string | null;
   role?: string;
+  about_author?: string | null;
+  profession?: string | null;
+  facebook?: string | null;
+  twitter?: string | null;
+  linkedin?: string | null;
+  instagram?: string | null;
+  youtube?: string | null;
 }
+
+export type ProfileFetchStatus =
+  | "idle"
+  | "loading"
+  | "succeeded"
+  | "failed";
 
 export interface AuthState {
   accessToken: string | null;
@@ -28,6 +42,10 @@ export interface AuthState {
   lastname: string | null;
   fullName: string | null;
   role: string | null;
+  /** Last successful GET /profile payload for consumers (e.g. Profile Details) */
+  serverProfile: ProfileResponse | null;
+  profileFetchStatus: ProfileFetchStatus;
+  profileFetchError: string | null;
   status: AuthAsyncStatus;
   error: string | null;
 }

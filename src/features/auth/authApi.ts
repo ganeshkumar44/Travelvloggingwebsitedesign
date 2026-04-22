@@ -1,3 +1,4 @@
+import type { UpdateProfileRequest } from "../profile/profileTypes";
 import type {
   LoginRequest,
   LoginResponse,
@@ -8,10 +9,14 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const LOGIN_URL = `${API_BASE_URL}/login`;
 const PROFILE_URL = `${API_BASE_URL}/profile`;
 
-function parseErrorMessage(data: unknown, status: number): string {
+export function parseApiErrorMessage(
+  data: unknown,
+  status: number,
+  fallbackPrefix: string,
+): string {
   if (typeof data === "string" && data.trim()) return data;
   if (typeof data !== "object" || data === null) {
-    return `Login failed (${status})`;
+    return `${fallbackPrefix} (${status})`;
   }
 
   const o = data as Record<string, unknown>;
@@ -28,12 +33,12 @@ function parseErrorMessage(data: unknown, status: number): string {
     });
 
     const joined = parts.filter(Boolean).join(", ");
-    return joined || `Login failed (${status})`;
+    return joined || `${fallbackPrefix} (${status})`;
   }
 
   if (typeof o.detail === "string") return o.detail;
 
-  return `Login failed (${status})`;
+  return `${fallbackPrefix} (${status})`;
 }
 
 export async function loginApi(
@@ -57,7 +62,7 @@ export async function loginApi(
   }
 
   if (!response.ok) {
-    throw new Error(parseErrorMessage(data, response.status));
+    throw new Error(parseApiErrorMessage(data, response.status, "Login failed"));
   }
 
   return data as LoginResponse;
@@ -82,7 +87,39 @@ export async function fetchProfileApi(
   }
 
   if (!response.ok) {
-    throw new Error(parseErrorMessage(data, response.status));
+    throw new Error(
+      parseApiErrorMessage(data, response.status, "Request failed"),
+    );
+  }
+
+  return data as ProfileResponse;
+}
+
+export async function updateProfileApi(
+  accessToken: string,
+  body: UpdateProfileRequest,
+): Promise<ProfileResponse> {
+  const response = await fetch(PROFILE_URL, {
+    method: "PATCH",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  let data: unknown = {};
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      parseApiErrorMessage(data, response.status, "Update failed"),
+    );
   }
 
   return data as ProfileResponse;
