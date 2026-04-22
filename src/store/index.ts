@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../features/auth/authSlice";
+import changePasswordReducer from "../features/changePassword/changePasswordSlice";
+import deleteAccountReducer from "../features/deleteAccount/deleteAccountSlice";
 import profileReducer from "../features/profile/profileSlice";
 import registerReducer from "../features/register/registerSlice";
 import verifyRegistrationOtpReducer from "../features/verifyRegistrationOtp/verifyRegistrationOtpSlice";
@@ -10,6 +12,8 @@ import resetPasswordReducer from "../features/resetPassword/resetPasswordSlice";
 export const store = configureStore({
   reducer: {
     auth: authReducer,
+    changePassword: changePasswordReducer,
+    deleteAccount: deleteAccountReducer,
     profile: profileReducer,
     register: registerReducer,
     verifyRegistrationOtp: verifyRegistrationOtpReducer,

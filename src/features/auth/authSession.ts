@@ -85,3 +85,18 @@ export function clearAuthSession(): void {
   sessionStorage.removeItem(AUTH_STORAGE_KEYS.userFullName);
   sessionStorage.removeItem(AUTH_STORAGE_KEYS.userRole);
 }
+
+/** Wipes all session and local storage (e.g. after account deletion). */
+export function clearAllSessionAndLocalStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.clear();
+  } catch {
+    /* ignore */
+  }
+  try {
+    localStorage.clear();
+  } catch {
+    /* ignore */
+  }
+}

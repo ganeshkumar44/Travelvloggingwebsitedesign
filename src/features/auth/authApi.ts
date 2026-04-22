@@ -1,3 +1,5 @@
+import type { ChangePasswordRequest, ChangePasswordResponse } from "../changePassword/changePasswordTypes";
+import type { DeleteAccountRequestBody, DeleteAccountResponse } from "../deleteAccount/deleteAccountTypes";
 import type { UpdateProfileRequest } from "../profile/profileTypes";
 import type {
   LoginRequest,
@@ -8,6 +10,7 @@ import type {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const LOGIN_URL = `${API_BASE_URL}/login`;
 const PROFILE_URL = `${API_BASE_URL}/profile`;
+const CHANGE_PASSWORD_URL = `${API_BASE_URL}/profile/change-password`;
 
 export function parseApiErrorMessage(
   data: unknown,
@@ -123,4 +126,64 @@ export async function updateProfileApi(
   }
 
   return data as ProfileResponse;
+}
+
+export async function changePasswordApi(
+  accessToken: string,
+  body: ChangePasswordRequest,
+): Promise<ChangePasswordResponse> {
+  const response = await fetch(CHANGE_PASSWORD_URL, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  let data: unknown = {};
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      parseApiErrorMessage(data, response.status, "Request failed"),
+    );
+  }
+
+  return data as ChangePasswordResponse;
+}
+
+export async function deleteAccountApi(
+  accessToken: string,
+  body: DeleteAccountRequestBody,
+): Promise<DeleteAccountResponse> {
+  const response = await fetch(PROFILE_URL, {
+    method: "DELETE",
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(body),
+  });
+
+  let data: unknown = {};
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      parseApiErrorMessage(data, response.status, "Request failed"),
+    );
+  }
+
+  return data as DeleteAccountResponse;
 }
