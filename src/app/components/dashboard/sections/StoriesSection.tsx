@@ -22,7 +22,7 @@ export function StoriesSection() {
       </div>
 
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-[var(--shadow-sm)]">
-        <div className="grid max-w-xl gap-6">
+        <div className="grid max-w-full gap-6">
           <div className="w-full space-y-2">
             <span className="block text-sm font-medium text-[var(--gray-dark)]">
               Upload Image

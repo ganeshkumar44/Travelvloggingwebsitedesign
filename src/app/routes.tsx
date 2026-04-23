@@ -1,7 +1,8 @@
 import React from "react";
-import { createBrowserRouter } from 'react-router';
-import { ReactNode } from 'react';
-import Home from './pages/Home';
+import { createBrowserRouter, Outlet } from "react-router";
+import { ReactNode } from "react";
+import { InactivityLogoutMonitor } from "./components/InactivityLogoutMonitor";
+import Home from "./pages/Home";
 import Gallery from './pages/Gallery';
 import Stories from './pages/Stories';
 import Vlogs from './pages/Vlogs';
@@ -30,119 +31,135 @@ function Layout({ children }: { children: ReactNode }) {
   );
 }
 
+function AppRootShell() {
+  return (
+    <>
+      <InactivityLogoutMonitor />
+      <Outlet />
+    </>
+  );
+}
+
 export const router = createBrowserRouter([
   {
-    path: '/',
-    element: (
-      <Layout>
-        <Home />
-      </Layout>
-    ),
-  },
-  {
-    path: '/gallery',
-    element: (
-      <Layout>
-        <Gallery />
-      </Layout>
-    ),
-  },
-  {
-    path: '/stories',
-    element: (
-      <Layout>
-        <Stories />
-      </Layout>
-    ),
-  },
-  {
-    path: '/vlogs',
-    element: (
-      <Layout>
-        <Vlogs />
-      </Layout>
-    ),
-  },
-  {
-    path: '/events',
-    element: (
-      <Layout>
-        <Events />
-      </Layout>
-    ),
-  },
-  {
-    path: '/contact',
-    element: (
-      <Layout>
-        <Contact />
-      </Layout>
-    ),
-  },
-  {
-    path: '/sign-in',
-    element: (
-      <Layout>
-        <SignIn />
-      </Layout>
-    ),
-  },
-  {
-    path: '/login',
-    element: (
-      <Layout>
-        <SignIn />
-      </Layout>
-    ),
-  },
-  {
-    path: '/forgot-password',
-    element: (
-      <Layout>
-        <ForgotPassword />
-      </Layout>
-    ),
-  },
-  {
-    path: '/register',
-    element: (
-      <Layout>
-        <Register />
-      </Layout>
-    ),
-  },
-  {
-    path: '/register-otp',
-    element: (
-      <Layout>
-        <RegisterOtp />
-      </Layout>
-    ),
-  },
-  {
-    path: '/dashboard',
-    element: (
-      <Layout>
-        <ProtectedRoute>
-          <Dashboard />
-        </ProtectedRoute>
-      </Layout>
-    ),
-  },
-  {
-    path: '*',
-    element: (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-6xl mb-4">404</h1>
-            <p className="text-xl text-[var(--gray-dark)] mb-8">Page not found</p>
-            <a href="/" className="text-[var(--primary)] hover:underline">
-              Go back home
-            </a>
-          </div>
-        </div>
-      </Layout>
-    ),
+    element: <AppRootShell />,
+    children: [
+      {
+        path: "/",
+        element: (
+          <Layout>
+            <Home />
+          </Layout>
+        ),
+      },
+      {
+        path: "/gallery",
+        element: (
+          <Layout>
+            <Gallery />
+          </Layout>
+        ),
+      },
+      {
+        path: "/stories",
+        element: (
+          <Layout>
+            <Stories />
+          </Layout>
+        ),
+      },
+      {
+        path: "/vlogs",
+        element: (
+          <Layout>
+            <Vlogs />
+          </Layout>
+        ),
+      },
+      {
+        path: "/events",
+        element: (
+          <Layout>
+            <Events />
+          </Layout>
+        ),
+      },
+      {
+        path: "/contact",
+        element: (
+          <Layout>
+            <Contact />
+          </Layout>
+        ),
+      },
+      {
+        path: "/sign-in",
+        element: (
+          <Layout>
+            <SignIn />
+          </Layout>
+        ),
+      },
+      {
+        path: "/login",
+        element: (
+          <Layout>
+            <SignIn />
+          </Layout>
+        ),
+      },
+      {
+        path: "/forgot-password",
+        element: (
+          <Layout>
+            <ForgotPassword />
+          </Layout>
+        ),
+      },
+      {
+        path: "/register",
+        element: (
+          <Layout>
+            <Register />
+          </Layout>
+        ),
+      },
+      {
+        path: "/register-otp",
+        element: (
+          <Layout>
+            <RegisterOtp />
+          </Layout>
+        ),
+      },
+      {
+        path: "/dashboard",
+        element: (
+          <Layout>
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          </Layout>
+        ),
+      },
+      {
+        path: "*",
+        element: (
+          <Layout>
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="text-center">
+                <h1 className="text-6xl mb-4">404</h1>
+                <p className="text-xl text-[var(--gray-dark)] mb-8">
+                  Page not found
+                </p>
+                <a href="/" className="text-[var(--primary)] hover:underline">
+                  Go back home
+                </a>
+              </div>
+            </div>
+          </Layout>
+        ),
+      },
+    ],
   },
 ]);
