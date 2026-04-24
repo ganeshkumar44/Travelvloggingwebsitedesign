@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { CircleUserRound } from "lucide-react";
+import { CircleUserRound, LogOut, Settings, User } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { logout } from "../../features/auth/authSlice";
 import { cn } from "./ui/utils";
@@ -18,7 +18,8 @@ export function UserAccountMenu({
 }: UserAccountMenuProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { accessToken, userEmail, fullName } = useAppSelector((s) => s.auth);
+  const { accessToken, userEmail, fullName, role, serverProfile } =
+    useAppSelector((s) => s.auth);
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
 
@@ -39,6 +40,15 @@ export function UserAccountMenu({
 
   const displayName =
     (fullName && fullName.trim()) || (userEmail && userEmail.trim()) || "—";
+
+  const roleLabel = (() => {
+    const r = (role || serverProfile?.role || "").trim();
+    if (!r) return "";
+    return r
+      .split(/[\s_]+/)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
+  })();
 
   const handleSignOut = () => {
     dispatch(logout());
@@ -86,24 +96,46 @@ export function UserAccountMenu({
             to="/dashboard?tab=dashboard"
             role="menuitem"
             className={cn(
-              "block w-full truncate border-b px-4 py-3 text-left text-sm transition-colors",
+              "flex w-full min-w-0 items-start gap-2.5 border-b px-4 py-3 text-left text-sm transition-colors",
               isHomePage
                 ? "border-white/10 text-gray-200 hover:bg-white/10 hover:text-white"
                 : "border-[var(--border)] text-[var(--gray-dark)] hover:bg-[var(--muted)] hover:text-[var(--primary)]",
             )}
-            title={displayName}
+            title={roleLabel ? `${displayName} (${roleLabel})` : displayName}
             onClick={() => {
               setOpen(false);
               onAfterNavigate?.();
             }}
           >
-            {displayName}
+            <User
+              className="mt-0.5 h-4 w-4 shrink-0 opacity-90"
+              strokeWidth={2}
+              aria-hidden
+            />
+            <span className="min-w-0 flex-1 break-words leading-snug">
+              {displayName}
+              {roleLabel ? (
+                <>
+                  {" "}
+                  <span
+                    className={cn(
+                      "ms-0.5 inline align-middle text-[0.7rem] font-medium leading-none",
+                      "whitespace-nowrap rounded-md px-1.5 py-1",
+                      "bg-neutral-900 text-white",
+                      isHomePage && "ring-1 ring-white/10",
+                    )}
+                  >
+                    {roleLabel}
+                  </span>
+                </>
+              ) : null}
+            </span>
           </Link>
           <Link
             to="/dashboard?tab=profile"
             role="menuitem"
             className={cn(
-              "block w-full border-b px-4 py-3 text-left text-sm font-medium transition-colors",
+              "flex w-full items-center gap-2.5 border-b px-4 py-3 text-left text-sm font-medium transition-colors",
               isHomePage
                 ? "border-white/10 text-white hover:bg-white/10"
                 : "border-[var(--border)] text-[var(--gray-dark)] hover:bg-[var(--muted)] hover:text-[var(--primary)]",
@@ -113,20 +145,22 @@ export function UserAccountMenu({
               onAfterNavigate?.();
             }}
           >
-            Accounts Setting
+            <Settings className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            <span>Account Setting</span>
           </Link>
           <button
             type="button"
             role="menuitem"
             className={cn(
-              "w-full px-4 py-3 text-left text-sm font-medium transition-colors",
+              "flex w-full items-center gap-2.5 px-4 py-3 text-left text-sm font-medium transition-colors",
               isHomePage
                 ? "text-[#38BDF8] hover:bg-white/10"
                 : "text-[var(--primary)] hover:bg-[var(--muted)]",
             )}
             onClick={handleSignOut}
           >
-            Sign Out
+            <LogOut className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+            <span>Sign Out</span>
           </button>
         </div>
       ) : null}

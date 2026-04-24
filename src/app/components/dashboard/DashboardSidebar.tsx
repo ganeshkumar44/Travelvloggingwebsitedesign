@@ -1,7 +1,27 @@
 import React from "react";
+import {
+  AlertTriangle,
+  FileText,
+  LayoutDashboard,
+  Lock,
+  User,
+  Users,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "../ui/utils";
 import type { DashboardNavId } from "./types";
 import { isDashboardNavGroup, type DashboardNavNode } from "./types";
+
+const NAV_ITEM_ICON: Record<DashboardNavId, LucideIcon> = {
+  dashboard: LayoutDashboard,
+  stories: FileText,
+  profile: User,
+  accounts: Lock,
+  closeAccount: AlertTriangle,
+  users: Users,
+};
+
+const iconClassName = "h-4 w-4 shrink-0";
 
 interface DashboardSidebarProps {
   items: DashboardNavNode[];
@@ -31,20 +51,22 @@ export function DashboardSidebar({
         {items.map((node) => {
           if (!isDashboardNavGroup(node)) {
             const isActive = node.id === activeId;
+            const TopIcon = NAV_ITEM_ICON[node.id];
             return (
               <li key={node.id}>
                 <button
                   type="button"
                   onClick={() => onSelect(node.id)}
                   className={cn(
-                    "w-full rounded-xl px-3 py-3 text-left text-sm font-medium transition-colors",
+                    "flex w-full items-center gap-2.5 rounded-xl px-3 py-3 text-left text-sm font-medium transition-colors",
                     "hover:bg-[var(--muted)] hover:text-[var(--primary)]",
                     isActive
                       ? "bg-[var(--muted)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--primary)]/20"
                       : "text-[var(--foreground)]",
                   )}
                 >
-                  {node.label}
+                  <TopIcon className={iconClassName} aria-hidden />
+                  <span>{node.label}</span>
                 </button>
               </li>
             );
@@ -54,23 +76,29 @@ export function DashboardSidebar({
               <p className="px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
                 {node.label}
               </p>
-              <ul className="ml-1.5 flex flex-col gap-0.5 border-l border-[var(--border)] pl-2" role="group" aria-label={node.label}>
+              <ul
+                className="ml-0 flex flex-col gap-0.5 pl-3"
+                role="group"
+                aria-label={node.label}
+              >
                 {node.children.map((child) => {
                   const isActive = child.id === activeId;
+                  const SubIcon = NAV_ITEM_ICON[child.id];
                   return (
                     <li key={child.id}>
                       <button
                         type="button"
                         onClick={() => onSelect(child.id)}
                         className={cn(
-                          "w-full rounded-lg py-2.5 pl-2 pr-2 text-left text-sm font-medium transition-colors",
+                          "flex w-full items-center gap-2.5 rounded-lg py-2.5 pl-1 pr-2 text-left text-sm font-medium transition-colors",
                           "hover:bg-[var(--muted)] hover:text-[var(--primary)]",
                           isActive
                             ? "bg-[var(--muted)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--primary)]/20"
                             : "text-[var(--foreground)]",
                         )}
                       >
-                        {child.label}
+                        <SubIcon className={iconClassName} aria-hidden />
+                        <span>{child.label}</span>
                       </button>
                     </li>
                   );
