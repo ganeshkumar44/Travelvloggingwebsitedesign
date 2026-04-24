@@ -8,6 +8,7 @@ import verifyRegistrationOtpReducer from "../features/verifyRegistrationOtp/veri
 import forgotPasswordReducer from "../features/forgotPassword/forgotPasswordSlice";
 import verifyForgotPasswordOtpReducer from "../features/verifyForgotPasswordOtp/verifyForgotPasswordOtpSlice";
 import resetPasswordReducer from "../features/resetPassword/resetPasswordSlice";
+import storyUploadReducer from "../features/storyUpload/storyUploadSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     forgotPassword: forgotPasswordReducer,
     verifyForgotPasswordOtp: verifyForgotPasswordOtpReducer,
     resetPassword: resetPasswordReducer,
+    storyUpload: storyUploadReducer,
   },
 });
 
