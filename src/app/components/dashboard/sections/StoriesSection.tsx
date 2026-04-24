@@ -14,6 +14,7 @@ import {
 } from "../../../../features/storyUpload/storyUploadSlice";
 
 const MAX_TAGS = 5;
+const TITLE_MAX_LEN = 200;
 
 const IMAGE_REQUIRED_MSG =
   "Image is required (upload file or provide URL)";
@@ -260,13 +261,15 @@ export function StoriesSection() {
             disabled={isSubmitting}
           />
 
-          <div className="w-full space-y-2">
+          <div className="w-full space-y-1.5">
             <DashboardTextField
               id="dash-stories-title"
               label="Title"
               value={title}
+              maxLength={TITLE_MAX_LEN}
               onChange={(e) => {
-                setTitle(e.target.value);
+                const v = e.target.value.slice(0, TITLE_MAX_LEN);
+                setTitle(v);
                 if (fieldErrors.title) {
                   setFieldErrors((er) => ({ ...er, title: undefined }));
                 }
@@ -280,6 +283,17 @@ export function StoriesSection() {
                   : undefined
               }
             />
+            <div className="flex items-center justify-between gap-3">
+              <p className="min-w-0 text-xs italic text-[var(--muted-foreground)]">
+                Maximum 200 characters allowed
+              </p>
+              <span
+                className="shrink-0 text-xs tabular-nums text-[var(--muted-foreground)]"
+                aria-live="polite"
+              >
+                {TITLE_MAX_LEN - title.length}
+              </span>
+            </div>
             {fieldErrors.title ? (
               <p className="text-sm text-red-600" role="alert">
                 {fieldErrors.title}
@@ -287,7 +301,7 @@ export function StoriesSection() {
             ) : null}
           </div>
 
-          <div className="w-full space-y-2">
+          <div className="w-full space-y-1.5">
             <DashboardTextareaField
               id="dash-stories-description"
               label="Description"
@@ -308,6 +322,17 @@ export function StoriesSection() {
                   : undefined
               }
             />
+            <div className="flex items-center justify-between gap-3">
+              <p className="min-w-0 text-xs italic text-[var(--muted-foreground)]">
+                Minimum 500 characters required
+              </p>
+              <span
+                className="shrink-0 text-xs tabular-nums text-[var(--muted-foreground)]"
+                aria-live="polite"
+              >
+                {description.length}
+              </span>
+            </div>
             {fieldErrors.description ? (
               <p className="text-sm text-red-600" role="alert">
                 {fieldErrors.description}

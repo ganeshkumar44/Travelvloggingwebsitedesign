@@ -1,5 +1,9 @@
 import React, { forwardRef } from "react";
-import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
+import type {
+  InputHTMLAttributes,
+  ReactNode,
+  TextareaHTMLAttributes,
+} from "react";
 import { cn } from "../ui/utils";
 
 const fieldClassName = cn(
@@ -14,19 +18,26 @@ export interface DashboardTextFieldProps
   extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
   label: string;
+  /** Optional right-aligned content on the label row (e.g. character count). */
+  labelAction?: ReactNode;
 }
 
 export const DashboardTextField = forwardRef<
   HTMLInputElement,
   DashboardTextFieldProps
->(({ id, label, className, ...props }, ref) => (
+>(({ id, label, labelAction, className, ...props }, ref) => (
   <div className="w-full space-y-2">
-    <label
-      htmlFor={id}
-      className="block text-sm font-medium text-[var(--gray-dark)]"
-    >
-      {label}
-    </label>
+    <div className="flex items-center justify-between gap-2">
+      <label
+        htmlFor={id}
+        className="min-w-0 text-sm font-medium text-[var(--gray-dark)]"
+      >
+        {label}
+      </label>
+      {labelAction != null ? (
+        <span className="shrink-0">{labelAction}</span>
+      ) : null}
+    </div>
     <input
       ref={ref}
       id={id}
@@ -41,24 +52,31 @@ export interface DashboardTextareaFieldProps
   extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   id: string;
   label: string;
+  /** Optional right-aligned content on the label row (e.g. character count). */
+  labelAction?: ReactNode;
 }
 
 export const DashboardTextareaField = forwardRef<
   HTMLTextAreaElement,
   DashboardTextareaFieldProps
->(({ id, label, className, rows = 4, ...props }, ref) => (
+>(({ id, label, labelAction, className, rows = 4, ...props }, ref) => (
   <div className="w-full space-y-2">
-    <label
-      htmlFor={id}
-      className="block text-sm font-medium text-[var(--gray-dark)]"
-    >
-      {label}
-    </label>
+    <div className="flex items-center justify-between gap-2">
+      <label
+        htmlFor={id}
+        className="min-w-0 text-sm font-medium text-[var(--gray-dark)]"
+      >
+        {label}
+      </label>
+      {labelAction != null ? (
+        <span className="shrink-0">{labelAction}</span>
+      ) : null}
+    </div>
     <textarea
       ref={ref}
       id={id}
       rows={rows}
-      className={cn(fieldClassName, "min-h-[100px] resize-y", className)}
+      className={cn(fieldClassName, "min-h-[100px] resize-y block", className)}
       {...props}
     />
   </div>
