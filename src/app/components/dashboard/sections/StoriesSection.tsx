@@ -6,6 +6,7 @@ import {
   DashboardTextareaField,
   DashboardTextField,
 } from "../DashboardFormField";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 import {
   clearStoryUploadError,
@@ -15,6 +16,9 @@ import {
 
 const MAX_TAGS = 5;
 const TITLE_MAX_LEN = 200;
+
+const STORIES_TAB_LIST = "list" as const;
+const STORIES_TAB_CREATE = "create" as const;
 
 const IMAGE_REQUIRED_MSG =
   "Image is required (upload file or provide URL)";
@@ -161,27 +165,50 @@ export function StoriesSection() {
         </p>
       </div>
 
-      {uploadError ? (
-        <p className="text-sm text-red-600" role="alert">
-          {uploadError}
-        </p>
-      ) : null}
-
-      {successMessage ? (
-        <p
-          className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-900/40 dark:bg-green-950/40 dark:text-green-200"
-          role="status"
+      <Tabs defaultValue={STORIES_TAB_CREATE} className="w-full">
+        <TabsList
+          className="grid h-auto w-full max-w-xl grid-cols-2 gap-1 p-1"
+          aria-label="Stories section"
         >
-          {successMessage}
-        </p>
-      ) : null}
+          <TabsTrigger value={STORIES_TAB_LIST} className="px-3 py-2">
+            Stories List
+          </TabsTrigger>
+          <TabsTrigger value={STORIES_TAB_CREATE} className="px-3 py-2">
+            Create New Stories
+          </TabsTrigger>
+        </TabsList>
 
-      <form
-        className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-[var(--shadow-sm)]"
-        onSubmit={onSubmit}
-        noValidate
-      >
-        <div className="grid max-w-full gap-6">
+        <TabsContent
+          value={STORIES_TAB_LIST}
+          className="mt-6 min-h-[12rem] rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)]/50 p-8 text-center"
+        >
+          <p className="text-sm text-[var(--muted-foreground)]">
+            No stories available
+          </p>
+        </TabsContent>
+
+        <TabsContent value={STORIES_TAB_CREATE} className="mt-6 space-y-8">
+          {uploadError ? (
+            <p className="text-sm text-red-600" role="alert">
+              {uploadError}
+            </p>
+          ) : null}
+
+          {successMessage ? (
+            <p
+              className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-900/40 dark:bg-green-950/40 dark:text-green-200"
+              role="status"
+            >
+              {successMessage}
+            </p>
+          ) : null}
+
+          <form
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-[var(--shadow-sm)]"
+            onSubmit={onSubmit}
+            noValidate
+          >
+            <div className="grid max-w-full gap-6">
           <div className="w-full space-y-2">
             <span className="block text-sm font-medium text-[var(--gray-dark)]">
               Upload Image
@@ -397,14 +424,16 @@ export function StoriesSection() {
               ) : null}
             </div>
           </div>
-        </div>
+            </div>
 
-        <div className="mt-8">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting…" : "Submit New Vlog"}
-          </Button>
-        </div>
-      </form>
+            <div className="mt-8">
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Submitting…" : "Submit New Vlog"}
+              </Button>
+            </div>
+          </form>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
