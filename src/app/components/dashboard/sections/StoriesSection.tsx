@@ -1,7 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Plus } from "lucide-react";
+import { Filter, MoreVertical, Plus } from "lucide-react";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../ui/dropdown-menu";
 import {
   DashboardTextareaField,
   DashboardTextField,
@@ -65,10 +71,15 @@ const INITIAL_STORY_FILTERS: StoryFilters = {
   dislikes: "",
 };
 
-function formatDateTime(input: string | null | undefined): string {
+/** YYYY-MM-DD in local time, for list display and date-only filtering. */
+function formatStoryDate(input: string | null | undefined): string {
   if (!input) return "";
   const date = new Date(input);
-  return Number.isNaN(date.getTime()) ? input : date.toLocaleString();
+  if (Number.isNaN(date.getTime())) return "";
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 function getStoryAuthorName(story: AllStoriesItem): string {
@@ -102,6 +113,30 @@ function OrSeparator() {
   );
 }
 
+function StoryRowActionsMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
+          aria-label="Open story actions"
+        >
+          <MoreVertical className="h-4 w-4" strokeWidth={2} aria-hidden />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[10rem]">
+        <DropdownMenuItem onSelect={() => {}}>Edit</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => {}} variant="destructive">
+          Delete
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => {}}>Accept</DropdownMenuItem>
+        <DropdownMenuItem onSelect={() => {}}>Reject</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function StoriesSection() {
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector((s) => s.auth.accessToken);
@@ -124,6 +159,7 @@ export function StoriesSection() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [filters, setFilters] = useState<StoryFilters>(INITIAL_STORY_FILTERS);
+  const [storyListFiltersVisible, setStoryListFiltersVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -231,8 +267,8 @@ export function StoriesSection() {
       const title = (story.title || "").toLowerCase();
       const location = (story.location || "").toLowerCase();
       const tagsText = (story.tags ?? []).join(", ").toLowerCase();
-      const createdAt = formatDateTime(story.created_at).toLowerCase();
-      const updatedAt = formatDateTime(story.updated_at).toLowerCase();
+      const createdAt = formatStoryDate(story.created_at).toLowerCase();
+      const updatedAt = formatStoryDate(story.updated_at).toLowerCase();
       const likes = String(story.total_likes).toLowerCase();
       const dislikes = String(story.total_dislikes).toLowerCase();
 
@@ -279,7 +315,7 @@ export function StoriesSection() {
         </p>
       </div>
 
-      <Tabs defaultValue={STORIES_TAB_CREATE} className="w-full">
+      <Tabs defaultValue={STORIES_TAB_LIST} className="w-full">
         <TabsList
           className="grid h-auto w-full max-w-xl grid-cols-2 gap-1 p-1"
           aria-label="Stories section"
@@ -296,68 +332,91 @@ export function StoriesSection() {
           value={STORIES_TAB_LIST}
           className="mt-6 space-y-6"
         >
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)]">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <DashboardTextField
-                id="stories-filter-username"
-                label="Username"
-                value={filters.username}
-                onChange={(e) => updateFilter("username", e.target.value)}
-                placeholder="Search username"
-              />
-              <DashboardTextField
-                id="stories-filter-title"
-                label="Title"
-                value={filters.title}
-                onChange={(e) => updateFilter("title", e.target.value)}
-                placeholder="Search title"
-              />
-              <DashboardTextField
-                id="stories-filter-location"
-                label="Location"
-                value={filters.location}
-                onChange={(e) => updateFilter("location", e.target.value)}
-                placeholder="Search location"
-              />
-              <DashboardTextField
-                id="stories-filter-tags"
-                label="Tags"
-                value={filters.tags}
-                onChange={(e) => updateFilter("tags", e.target.value)}
-                placeholder="Search tags"
-              />
-              <DashboardTextField
-                id="stories-filter-created-at"
-                label="Created At"
-                value={filters.createdAt}
-                onChange={(e) => updateFilter("createdAt", e.target.value)}
-                placeholder="Search created date"
-              />
-              <DashboardTextField
-                id="stories-filter-updated-at"
-                label="Updated At"
-                value={filters.updatedAt}
-                onChange={(e) => updateFilter("updatedAt", e.target.value)}
-                placeholder="Search updated date"
-              />
-              <DashboardTextField
-                id="stories-filter-likes"
-                label="Likes"
-                value={filters.likes}
-                onChange={(e) => updateFilter("likes", e.target.value)}
-                placeholder="Search likes"
-              />
-              <DashboardTextField
-                id="stories-filter-dislikes"
-                label="Dislikes"
-                value={filters.dislikes}
-                onChange={(e) => updateFilter("dislikes", e.target.value)}
-                placeholder="Search dislikes"
-              />
+          {storyListFiltersVisible ? (
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)]">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <DashboardTextField
+                  id="stories-filter-username"
+                  label="Username"
+                  value={filters.username}
+                  onChange={(e) => updateFilter("username", e.target.value)}
+                  placeholder="Search username"
+                />
+                <DashboardTextField
+                  id="stories-filter-title"
+                  label="Title"
+                  value={filters.title}
+                  onChange={(e) => updateFilter("title", e.target.value)}
+                  placeholder="Search title"
+                />
+                <DashboardTextField
+                  id="stories-filter-location"
+                  label="Location"
+                  value={filters.location}
+                  onChange={(e) => updateFilter("location", e.target.value)}
+                  placeholder="Search location"
+                />
+                <DashboardTextField
+                  id="stories-filter-tags"
+                  label="Tags"
+                  value={filters.tags}
+                  onChange={(e) => updateFilter("tags", e.target.value)}
+                  placeholder="Search tags"
+                />
+                <DashboardTextField
+                  id="stories-filter-created-at"
+                  label="Created At"
+                  value={filters.createdAt}
+                  onChange={(e) => updateFilter("createdAt", e.target.value)}
+                  placeholder="Search created date"
+                />
+                <DashboardTextField
+                  id="stories-filter-updated-at"
+                  label="Updated At"
+                  value={filters.updatedAt}
+                  onChange={(e) => updateFilter("updatedAt", e.target.value)}
+                  placeholder="Search updated date"
+                />
+                <DashboardTextField
+                  id="stories-filter-likes"
+                  label="Likes"
+                  value={filters.likes}
+                  onChange={(e) => updateFilter("likes", e.target.value)}
+                  placeholder="Search likes"
+                />
+                <DashboardTextField
+                  id="stories-filter-dislikes"
+                  label="Dislikes"
+                  value={filters.dislikes}
+                  onChange={(e) => updateFilter("dislikes", e.target.value)}
+                  placeholder="Search dislikes"
+                />
+              </div>
             </div>
-          </div>
+          ) : null}
 
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-sm)]">
+            <div className="flex justify-end border-b border-[var(--border)]/80 px-4 py-2 sm:px-6 sm:py-2.5">
+              <button
+                type="button"
+                onClick={() =>
+                  setStoryListFiltersVisible((v) => !v)
+                }
+                className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
+                aria-label={
+                  storyListFiltersVisible
+                    ? "Hide story filters"
+                    : "Show story filters"
+                }
+                aria-expanded={storyListFiltersVisible}
+              >
+                <Filter
+                  className="h-5 w-5"
+                  strokeWidth={2}
+                  aria-hidden
+                />
+              </button>
+            </div>
             {storiesError ? (
               <p className="px-6 py-5 text-sm text-red-600" role="alert">
                 {storiesError}
@@ -379,7 +438,7 @@ export function StoriesSection() {
             {!isStoriesLoading && !storiesError && totalRecords > 0 ? (
               <>
                 <div className="overflow-x-auto">
-                  <table className="min-w-[1200px] w-full border-collapse text-sm">
+                  <table className="min-w-[1280px] w-full border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-[var(--border)] bg-[var(--muted)]/30 text-left">
                         <th className="px-4 py-3 font-semibold">Username</th>
@@ -392,6 +451,9 @@ export function StoriesSection() {
                         <th className="px-4 py-3 font-semibold">Updated At</th>
                         <th className="px-4 py-3 font-semibold">Likes</th>
                         <th className="px-4 py-3 font-semibold">Dislikes</th>
+                        <th className="w-[88px] px-4 py-3 text-right font-semibold">
+                          Actions
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -437,13 +499,18 @@ export function StoriesSection() {
                             )}
                           </td>
                           <td className="whitespace-nowrap px-4 py-3">
-                            {formatDateTime(story.created_at) || "-"}
+                            {formatStoryDate(story.created_at) || "-"}
                           </td>
                           <td className="whitespace-nowrap px-4 py-3">
-                            {formatDateTime(story.updated_at) || "-"}
+                            {formatStoryDate(story.updated_at) || "-"}
                           </td>
                           <td className="px-4 py-3">{story.total_likes}</td>
                           <td className="px-4 py-3">{story.total_dislikes}</td>
+                          <td className="w-[88px] whitespace-nowrap px-4 py-3 text-right align-middle">
+                            <div className="inline-flex justify-end">
+                              <StoryRowActionsMenu />
+                            </div>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
