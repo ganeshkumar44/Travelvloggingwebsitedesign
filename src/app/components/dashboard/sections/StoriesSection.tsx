@@ -370,6 +370,12 @@ export function StoriesSection() {
   const totalRecords = filteredStories.length;
   const totalPages = Math.max(1, Math.ceil(totalRecords / pageSize));
 
+  /** No rows from the server (not loading, no error). Hide filters; show empty-state copy. */
+  const isStoriesListEmpty = !isStoriesLoading && !storiesError && storiesData.length === 0;
+  /** Server returned stories, but current filters match none. */
+  const hasNoMatchingFilteredStories =
+    !isStoriesLoading && !storiesError && storiesData.length > 0 && totalRecords === 0;
+
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(totalPages);
@@ -414,23 +420,25 @@ export function StoriesSection() {
           value={STORIES_TAB_LIST}
           className="mt-6 space-y-4"
         >
-          <div className="flex w-full justify-end">
-            <button
-              type="button"
-              onClick={() => setStoryListFiltersVisible((v) => !v)}
-              className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md bg-[var(--primary)] text-white shadow-sm transition-[background-color,box-shadow] hover:bg-[var(--primary)]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
-              aria-label={
-                storyListFiltersVisible
-                  ? "Hide story filters"
-                  : "Show story filters"
-              }
-              aria-expanded={storyListFiltersVisible}
-            >
-              <FilledFilterIcon className="h-4 w-4" />
-            </button>
-          </div>
+          {!isStoriesListEmpty ? (
+            <div className="flex w-full justify-end">
+              <button
+                type="button"
+                onClick={() => setStoryListFiltersVisible((v) => !v)}
+                className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md bg-[var(--primary)] text-white shadow-sm transition-[background-color,box-shadow] hover:bg-[var(--primary)]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
+                aria-label={
+                  storyListFiltersVisible
+                    ? "Hide story filters"
+                    : "Show story filters"
+                }
+                aria-expanded={storyListFiltersVisible}
+              >
+                <FilledFilterIcon className="h-4 w-4" />
+              </button>
+            </div>
+          ) : null}
 
-          {storyListFiltersVisible ? (
+          {!isStoriesListEmpty && storyListFiltersVisible ? (
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)]">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <DashboardTextField
@@ -506,7 +514,15 @@ export function StoriesSection() {
               </p>
             ) : null}
 
-            {!isStoriesLoading && !storiesError && totalRecords === 0 ? (
+            {isStoriesListEmpty ? (
+              <div className="flex min-h-[min(50vh,320px)] items-center justify-center px-6 py-16">
+                <p className="text-center text-sm tracking-tight text-[var(--muted-foreground)]">
+                  No stories available yet
+                </p>
+              </div>
+            ) : null}
+
+            {hasNoMatchingFilteredStories ? (
               <p className="px-6 py-5 text-sm text-[var(--muted-foreground)]">
                 No stories found
               </p>
