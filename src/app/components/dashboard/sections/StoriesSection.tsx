@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Filter, MoreVertical, Plus } from "lucide-react";
+import { MoreVertical, Plus } from "lucide-react";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
 import {
@@ -95,6 +95,62 @@ function getStoryImageUrl(image: string): string {
     return trimmed;
   }
   return `${STORY_IMAGE_BASE_URL}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+}
+
+const storyTableCell =
+  "border-b border-r border-[var(--border)]/80 px-4 py-3 align-top";
+const storyTableHead =
+  "border-b border-r border-[var(--border)]/80 bg-[var(--muted)]/30 px-4 py-3 text-left font-semibold align-middle";
+
+function FilledFilterIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      aria-hidden
+      focusable="false"
+    >
+      <path
+        d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+type StoryTableTagsCellProps = {
+  storyId: number;
+  tags: string[] | null | undefined;
+};
+
+function StoryTableTagsCell({ storyId, tags }: StoryTableTagsCellProps) {
+  const list = tags?.filter((t) => t && t.trim().length) ?? [];
+  if (list.length === 0) return <span className="text-[var(--muted-foreground)]">-</span>;
+
+  const allTagsText = list.join(", ");
+  const shown = list.slice(0, 2);
+  const restCount = list.length - 2;
+
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      {shown.map((tag, index) => (
+        <span
+          key={`${storyId}-tag-${index}-${tag}`}
+          className="rounded-md bg-[var(--muted)] px-2 py-0.5 text-xs"
+        >
+          {tag}
+        </span>
+      ))}
+      {restCount > 0 ? (
+        <span
+          className="cursor-default rounded-md border border-dashed border-[var(--border)] bg-[var(--input-background)] px-1.5 py-0.5 text-xs text-[var(--foreground)]"
+          title={allTagsText}
+        >
+          +{restCount}
+        </span>
+      ) : null}
+    </div>
+  );
 }
 
 function OrSeparator() {
@@ -330,8 +386,24 @@ export function StoriesSection() {
 
         <TabsContent
           value={STORIES_TAB_LIST}
-          className="mt-6 space-y-6"
+          className="mt-6 space-y-4"
         >
+          <div className="flex w-full justify-end">
+            <button
+              type="button"
+              onClick={() => setStoryListFiltersVisible((v) => !v)}
+              className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-md bg-[var(--primary)] text-white shadow-sm transition-[background-color,box-shadow] hover:bg-[var(--primary)]/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
+              aria-label={
+                storyListFiltersVisible
+                  ? "Hide story filters"
+                  : "Show story filters"
+              }
+              aria-expanded={storyListFiltersVisible}
+            >
+              <FilledFilterIcon className="h-4 w-4" />
+            </button>
+          </div>
+
           {storyListFiltersVisible ? (
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 shadow-[var(--shadow-sm)]">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -396,27 +468,6 @@ export function StoriesSection() {
           ) : null}
 
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[var(--shadow-sm)]">
-            <div className="flex justify-end border-b border-[var(--border)]/80 px-4 py-2 sm:px-6 sm:py-2.5">
-              <button
-                type="button"
-                onClick={() =>
-                  setStoryListFiltersVisible((v) => !v)
-                }
-                className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
-                aria-label={
-                  storyListFiltersVisible
-                    ? "Hide story filters"
-                    : "Show story filters"
-                }
-                aria-expanded={storyListFiltersVisible}
-              >
-                <Filter
-                  className="h-5 w-5"
-                  strokeWidth={2}
-                  aria-hidden
-                />
-              </button>
-            </div>
             {storiesError ? (
               <p className="px-6 py-5 text-sm text-red-600" role="alert">
                 {storiesError}
@@ -440,33 +491,36 @@ export function StoriesSection() {
                 <div className="overflow-x-auto">
                   <table className="min-w-[1280px] w-full border-collapse text-sm">
                     <thead>
-                      <tr className="border-b border-[var(--border)] bg-[var(--muted)]/30 text-left">
-                        <th className="px-4 py-3 font-semibold">Username</th>
-                        <th className="px-4 py-3 font-semibold">Title</th>
-                        <th className="px-4 py-3 font-semibold">Image</th>
-                        <th className="px-4 py-3 font-semibold">Description</th>
-                        <th className="px-4 py-3 font-semibold">Location</th>
-                        <th className="px-4 py-3 font-semibold">Tags</th>
-                        <th className="px-4 py-3 font-semibold">Created At</th>
-                        <th className="px-4 py-3 font-semibold">Updated At</th>
-                        <th className="px-4 py-3 font-semibold">Likes</th>
-                        <th className="px-4 py-3 font-semibold">Dislikes</th>
-                        <th className="w-[88px] px-4 py-3 text-right font-semibold">
+                      <tr className="text-left">
+                        <th className={storyTableHead}>Image</th>
+                        <th
+                          className={`min-w-0 max-w-[14rem] ${storyTableHead}`}
+                        >
+                          Title
+                        </th>
+                        <th
+                          className={`min-w-0 max-w-xs ${storyTableHead}`}
+                        >
+                          Description
+                        </th>
+                        <th className={storyTableHead}>Username</th>
+                        <th className={storyTableHead}>Location</th>
+                        <th className={storyTableHead}>Tags</th>
+                        <th className={storyTableHead}>Created At</th>
+                        <th className={storyTableHead}>Updated At</th>
+                        <th className={storyTableHead}>Likes</th>
+                        <th className={storyTableHead}>Dislikes</th>
+                        <th
+                          className={`w-[88px] text-right ${storyTableHead}`}
+                        >
                           Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       {paginatedStories.map((story) => (
-                        <tr
-                          key={story.id}
-                          className="border-b border-[var(--border)]/80 align-top"
-                        >
-                          <td className="px-4 py-3">
-                            {getStoryAuthorName(story) || "-"}
-                          </td>
-                          <td className="px-4 py-3">{story.title || "-"}</td>
-                          <td className="px-4 py-3">
+                        <tr key={story.id} className="align-top">
+                          <td className={storyTableCell}>
                             {story.image ? (
                               <img
                                 src={getStoryImageUrl(story.image)}
@@ -478,35 +532,47 @@ export function StoriesSection() {
                               "-"
                             )}
                           </td>
-                          <td className="max-w-[320px] px-4 py-3">
-                            <p className="line-clamp-3">{story.description || "-"}</p>
+                          <td
+                            className={`min-w-0 max-w-[14rem] ${storyTableCell}`}
+                          >
+                            <p className="line-clamp-2 min-w-0 break-words">
+                              {story.title || "-"}
+                            </p>
                           </td>
-                          <td className="px-4 py-3">{story.location || "-"}</td>
-                          <td className="px-4 py-3">
-                            {story.tags && story.tags.length > 0 ? (
-                              <div className="flex flex-wrap gap-1.5">
-                                {story.tags.map((tag) => (
-                                  <span
-                                    key={`${story.id}-${tag}`}
-                                    className="rounded-md bg-[var(--muted)] px-2 py-0.5 text-xs"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            ) : (
-                              "-"
-                            )}
+                          <td className={`min-w-0 max-w-xs ${storyTableCell}`}>
+                            <p className="line-clamp-2 min-w-0 break-words text-[var(--foreground)]">
+                              {story.description || "-"}
+                            </p>
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3">
+                          <td className={storyTableCell}>
+                            {getStoryAuthorName(story) || "-"}
+                          </td>
+                          <td className={storyTableCell}>
+                            {story.location || "-"}
+                          </td>
+                          <td className={storyTableCell}>
+                            <StoryTableTagsCell
+                              storyId={story.id}
+                              tags={story.tags}
+                            />
+                          </td>
+                          <td
+                            className={`whitespace-nowrap ${storyTableCell}`}
+                          >
                             {formatStoryDate(story.created_at) || "-"}
                           </td>
-                          <td className="whitespace-nowrap px-4 py-3">
+                          <td
+                            className={`whitespace-nowrap ${storyTableCell}`}
+                          >
                             {formatStoryDate(story.updated_at) || "-"}
                           </td>
-                          <td className="px-4 py-3">{story.total_likes}</td>
-                          <td className="px-4 py-3">{story.total_dislikes}</td>
-                          <td className="w-[88px] whitespace-nowrap px-4 py-3 text-right align-middle">
+                          <td className={storyTableCell}>{story.total_likes}</td>
+                          <td className={storyTableCell}>
+                            {story.total_dislikes}
+                          </td>
+                          <td
+                            className={`w-[88px] whitespace-nowrap text-right ${storyTableCell} align-middle`}
+                          >
                             <div className="inline-flex justify-end">
                               <StoryRowActionsMenu />
                             </div>
