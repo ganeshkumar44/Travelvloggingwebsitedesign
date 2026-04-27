@@ -19,6 +19,7 @@ export interface AllStoriesItem {
   title: string;
   description: string;
   location: string | null;
+  status: string;
   tags: string[] | null;
   created_at: string;
   updated_at: string;

@@ -118,6 +118,32 @@ function FilledFilterIcon({ className }: { className?: string }) {
   );
 }
 
+function formatStoryStatusLabel(status: string | null | undefined): string {
+  const t = (status ?? "").trim();
+  if (!t) return "—";
+  const lower = t.toLowerCase();
+  if (lower === "approved") return "Approved";
+  if (lower === "pending") return "Pending";
+  if (lower === "rejected") return "Rejected";
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+
+function storyStatusBadgeClassName(
+  status: string | null | undefined,
+): string {
+  const lower = (status ?? "").trim().toLowerCase();
+  if (lower === "approved") {
+    return "bg-green-100 text-green-950 dark:bg-green-950/50 dark:text-green-100";
+  }
+  if (lower === "pending") {
+    return "bg-amber-100 text-amber-950 dark:bg-amber-950/50 dark:text-amber-100";
+  }
+  if (lower === "rejected") {
+    return "bg-red-300 text-red-950 dark:bg-red-950/50 dark:text-red-100";
+  }
+  return "bg-[var(--muted)] text-[var(--foreground)]";
+}
+
 type StoryTableTagsCellProps = {
   storyId: number;
   tags: string[] | null | undefined;
@@ -489,7 +515,7 @@ export function StoriesSection() {
             {!isStoriesLoading && !storiesError && totalRecords > 0 ? (
               <>
                 <div className="overflow-x-auto">
-                  <table className="min-w-[1280px] w-full border-collapse text-sm">
+                  <table className="min-w-[1360px] w-full border-collapse text-sm">
                     <thead>
                       <tr className="text-left">
                         <th className={storyTableHead}>Image</th>
@@ -504,6 +530,7 @@ export function StoriesSection() {
                           Description
                         </th>
                         <th className={storyTableHead}>Username</th>
+                        <th className={storyTableHead}>Status</th>
                         <th className={storyTableHead}>Location</th>
                         <th className={storyTableHead}>Tags</th>
                         <th className={storyTableHead}>Created At</th>
@@ -546,6 +573,16 @@ export function StoriesSection() {
                           </td>
                           <td className={storyTableCell}>
                             {getStoryAuthorName(story) || "-"}
+                          </td>
+                          <td className={storyTableCell}>
+                            <span
+                              className={cn(
+                                "inline-flex rounded-md px-2 py-0.5 text-xs font-medium",
+                                storyStatusBadgeClassName(story.status),
+                              )}
+                            >
+                              {formatStoryStatusLabel(story.status)}
+                            </span>
                           </td>
                           <td className={storyTableCell}>
                             {story.location || "-"}
