@@ -5,7 +5,7 @@ export const DASHBOARD_NAV_STRUCTURE: DashboardNavNode[] = [
   { type: "item", id: "stories", label: "Stories" },
   {
     type: "group",
-    label: "Accounts Setting",
+    label: "Account Setting",
     children: [
       { id: "profile", label: "Profile Details" },
       { id: "accounts", label: "Change Password" },
