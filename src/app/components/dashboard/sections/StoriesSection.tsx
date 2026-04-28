@@ -1,13 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MoreVertical, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../../ui/dropdown-menu";
 import {
   DashboardTextareaField,
   DashboardTextField,
@@ -21,6 +15,7 @@ import {
 } from "../../../../features/storyUpload/storyUploadSlice";
 import { fetchAllStories } from "../../../../features/allStories/allStoriesSlice";
 import type { AllStoriesItem } from "../../../../features/allStories/allStoriesTypes";
+import { StoryTableRowActions } from "./StoryListActionModals";
 
 const MAX_TAGS = 5;
 const TITLE_MAX_LEN = 200;
@@ -192,30 +187,6 @@ function OrSeparator() {
       </span>
       <div className="h-px min-w-0 flex-1 bg-[var(--border)]" />
     </div>
-  );
-}
-
-function StoryRowActionsMenu() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
-          aria-label="Open story actions"
-        >
-          <MoreVertical className="h-4 w-4" strokeWidth={2} aria-hidden />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="min-w-[10rem]">
-        <DropdownMenuItem onSelect={() => {}}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => {}} variant="destructive">
-          Delete
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => {}}>Accept</DropdownMenuItem>
-        <DropdownMenuItem onSelect={() => {}}>Reject</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 }
 
@@ -627,7 +598,7 @@ export function StoriesSection() {
                             className={`w-[88px] whitespace-nowrap text-right ${storyTableCell} align-middle`}
                           >
                             <div className="inline-flex justify-end">
-                              <StoryRowActionsMenu />
+                              <StoryTableRowActions story={story} />
                             </div>
                           </td>
                         </tr>
