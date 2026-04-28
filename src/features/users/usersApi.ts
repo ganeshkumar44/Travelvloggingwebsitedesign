@@ -1,5 +1,6 @@
 import { parseApiErrorMessage } from "../auth/authApi";
 import { readAuthFromSession } from "../auth/authSession";
+import { apiFetch } from "../../lib/apiFetch";
 import type { UserListItem, UsersListResponse } from "./usersTypes";
 
 const USERS_URL = "http://127.0.0.1:8000/users";
@@ -80,7 +81,7 @@ export async function fetchUsersApi(): Promise<UsersListResponse> {
     throw new Error("Not authenticated. Please sign in again.");
   }
 
-  const response = await fetch(USERS_URL, {
+  const response = await apiFetch(USERS_URL, {
     method: "GET",
     headers: {
       accept: "application/json",

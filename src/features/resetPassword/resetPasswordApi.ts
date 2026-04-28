@@ -1,3 +1,4 @@
+import { apiFetch } from "../../lib/apiFetch";
 import type { ResetPasswordRequest, ResetPasswordResponse } from "./resetPasswordTypes";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -33,7 +34,7 @@ function parseResetPasswordApiError(data: unknown, status: number): string {
 export async function resetPasswordApi(
   body: ResetPasswordRequest,
 ): Promise<ResetPasswordResponse> {
-  const response = await fetch(RESET_PASSWORD_URL, {
+  const response = await apiFetch(RESET_PASSWORD_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

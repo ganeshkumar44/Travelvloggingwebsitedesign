@@ -1,3 +1,4 @@
+import { apiFetch } from "../../lib/apiFetch";
 import type {
   ForgotPasswordRequest,
   ForgotPasswordResponse,
@@ -36,7 +37,7 @@ function parseForgotPasswordApiError(data: unknown, status: number): string {
 export async function forgotPasswordApi(
   body: ForgotPasswordRequest,
 ): Promise<ForgotPasswordResponse> {
-  const response = await fetch(FORGOT_PASSWORD_URL, {
+  const response = await apiFetch(FORGOT_PASSWORD_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

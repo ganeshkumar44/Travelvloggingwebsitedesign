@@ -12,14 +12,10 @@ import {
 } from "../../ui/alert-dialog";
 import { cn } from "../../ui/utils";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
-import { logout } from "../../../../features/auth/authSlice";
-import { clearAllSessionAndLocalStorage } from "../../../../features/auth/authSession";
-import { resetUpdateState } from "../../../../features/profile/profileSlice";
-import { resetChangePasswordState } from "../../../../features/changePassword/changePasswordSlice";
+import { clearClientAuthState } from "../../../../lib/globalClientLogout";
 import {
   clearDeleteAccountError,
   deleteAccount,
-  resetDeleteAccountState,
 } from "../../../../features/deleteAccount/deleteAccountSlice";
 
 const DELETE_REDIRECT_MS = 1200;
@@ -43,11 +39,7 @@ export function CloseAccountSection() {
   const hasPassword = currentPassword.trim().length > 0;
 
   const performFullSignOut = () => {
-    clearAllSessionAndLocalStorage();
-    dispatch(logout());
-    dispatch(resetUpdateState());
-    dispatch(resetChangePasswordState());
-    dispatch(resetDeleteAccountState());
+    clearClientAuthState();
   };
 
   const handleRequestDelete = () => {

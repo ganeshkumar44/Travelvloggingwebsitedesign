@@ -1,15 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useNavigate } from "react-router";
-import { toast } from "sonner";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { logout } from "../../features/auth/authSlice";
-import {
-  AUTH_STORAGE_KEYS,
-  clearAllSessionAndLocalStorage,
-} from "../../features/auth/authSession";
-import { resetUpdateState } from "../../features/profile/profileSlice";
-import { resetChangePasswordState } from "../../features/changePassword/changePasswordSlice";
-import { resetDeleteAccountState } from "../../features/deleteAccount/deleteAccountSlice";
+import { useAppSelector } from "../../store/hooks";
+import { AUTH_STORAGE_KEYS } from "../../features/auth/authSession";
+import { performGlobalClientLogout } from "../../lib/globalClientLogout";
 
 const _timeoutEnv = import.meta.env.VITE_INACTIVITY_TIMEOUT_MS;
 const INACTIVITY_MS = (() => {
@@ -43,8 +35,6 @@ function broadcastInactivityLogoutToOtherTabs(): void {
  * Global auto-logout when the user is idle while authenticated. Mount once under the router.
  */
 export function InactivityLogoutMonitor() {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const accessToken = useAppSelector((s) => s.auth.accessToken);
   const isAuthenticated = Boolean(accessToken);
 
@@ -53,14 +43,6 @@ export function InactivityLogoutMonitor() {
   );
   const isLoggingOutRef = useRef(false);
   const lastMousemoveAtRef = useRef(0);
-
-  const runFullClientLogout = useCallback(() => {
-    clearAllSessionAndLocalStorage();
-    dispatch(logout());
-    dispatch(resetUpdateState());
-    dispatch(resetChangePasswordState());
-    dispatch(resetDeleteAccountState());
-  }, [dispatch]);
 
   const performInactivityLogout = useCallback(
     (source: "idle" | "remote_tab" = "idle") => {
@@ -71,11 +53,9 @@ export function InactivityLogoutMonitor() {
       if (!hasToken) return;
 
       isLoggingOutRef.current = true;
-      toast.info("You have been logged out due to inactivity.");
 
       const finish = () => {
-        runFullClientLogout();
-        navigate("/sign-in", { replace: true });
+        performGlobalClientLogout({ source: "inactivity" });
       };
 
       if (source === "idle") {
@@ -86,7 +66,7 @@ export function InactivityLogoutMonitor() {
         finish();
       }
     },
-    [accessToken, navigate, runFullClientLogout],
+    [accessToken],
   );
 
   const clearInactivityTimeout = useCallback(() => {

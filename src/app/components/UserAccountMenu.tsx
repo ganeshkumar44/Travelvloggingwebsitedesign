@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import { CircleUserRound, LogOut, Settings, User } from "lucide-react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { logout } from "../../features/auth/authSlice";
+import { useAppSelector } from "../../store/hooks";
+import { performGlobalClientLogout } from "../../lib/globalClientLogout";
 import { cn } from "./ui/utils";
 
 interface UserAccountMenuProps {
@@ -16,8 +16,6 @@ export function UserAccountMenu({
   iconClassName,
   onAfterNavigate,
 }: UserAccountMenuProps) {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const { accessToken, userEmail, fullName, role, serverProfile } =
     useAppSelector((s) => s.auth);
   const [open, setOpen] = useState(false);
@@ -51,10 +49,9 @@ export function UserAccountMenu({
   })();
 
   const handleSignOut = () => {
-    dispatch(logout());
     setOpen(false);
     onAfterNavigate?.();
-    navigate("/sign-in", { replace: true });
+    performGlobalClientLogout({ source: "manual" });
   };
 
   if (!authenticated) {

@@ -1,3 +1,4 @@
+import { apiFetch } from "../../lib/apiFetch";
 import type { RegisterRequest, RegisterResponse } from "./registerTypes";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -33,7 +34,7 @@ function parseRegisterApiError(data: unknown, status: number): string {
 export async function registerApi(
   body: RegisterRequest,
 ): Promise<RegisterResponse> {
-  const response = await fetch(REGISTER_URL, {
+  const response = await apiFetch(REGISTER_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

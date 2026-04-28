@@ -1,4 +1,5 @@
 import { parseApiErrorMessage } from "../auth/authApi";
+import { apiFetch } from "../../lib/apiFetch";
 import type { StoryUploadResponse } from "./storyUploadTypes";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -8,7 +9,7 @@ export async function uploadStoryApi(
   accessToken: string,
   formData: FormData,
 ): Promise<StoryUploadResponse> {
-  const response = await fetch(STORIES_UPLOAD_URL, {
+  const response = await apiFetch(STORIES_UPLOAD_URL, {
     method: "POST",
     headers: {
       accept: "application/json",

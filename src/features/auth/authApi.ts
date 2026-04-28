@@ -1,6 +1,7 @@
 import type { ChangePasswordRequest, ChangePasswordResponse } from "../changePassword/changePasswordTypes";
 import type { DeleteAccountRequestBody, DeleteAccountResponse } from "../deleteAccount/deleteAccountTypes";
 import type { UpdateProfileRequest } from "../profile/profileTypes";
+import { apiFetch } from "../../lib/apiFetch";
 import type {
   LoginRequest,
   LoginResponse,
@@ -74,7 +75,7 @@ export async function loginApi(
 export async function fetchProfileApi(
   accessToken: string,
 ): Promise<ProfileResponse> {
-  const response = await fetch(PROFILE_URL, {
+  const response = await apiFetch(PROFILE_URL, {
     method: "GET",
     headers: {
       accept: "application/json",
@@ -102,7 +103,7 @@ export async function updateProfileApi(
   accessToken: string,
   body: UpdateProfileRequest,
 ): Promise<ProfileResponse> {
-  const response = await fetch(PROFILE_URL, {
+  const response = await apiFetch(PROFILE_URL, {
     method: "PATCH",
     headers: {
       accept: "application/json",
@@ -132,7 +133,7 @@ export async function changePasswordApi(
   accessToken: string,
   body: ChangePasswordRequest,
 ): Promise<ChangePasswordResponse> {
-  const response = await fetch(CHANGE_PASSWORD_URL, {
+  const response = await apiFetch(CHANGE_PASSWORD_URL, {
     method: "POST",
     headers: {
       accept: "application/json",
@@ -162,7 +163,7 @@ export async function deleteAccountApi(
   accessToken: string,
   body: DeleteAccountRequestBody,
 ): Promise<DeleteAccountResponse> {
-  const response = await fetch(PROFILE_URL, {
+  const response = await apiFetch(PROFILE_URL, {
     method: "DELETE",
     headers: {
       accept: "application/json",

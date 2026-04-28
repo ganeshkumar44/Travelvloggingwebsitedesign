@@ -1,3 +1,4 @@
+import { apiFetch } from "../../lib/apiFetch";
 import type {
   VerifyForgotPasswordOtpRequest,
   VerifyForgotPasswordOtpResponse,
@@ -39,7 +40,7 @@ function parseVerifyForgotPasswordOtpError(
 export async function verifyForgotPasswordOtpApi(
   body: VerifyForgotPasswordOtpRequest,
 ): Promise<VerifyForgotPasswordOtpResponse> {
-  const response = await fetch(VERIFY_URL, {
+  const response = await apiFetch(VERIFY_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,3 +1,4 @@
+import { apiFetch } from "../../lib/apiFetch";
 import type {
   VerifyRegistrationOtpRequest,
   VerifyRegistrationOtpResponse,
@@ -36,7 +37,7 @@ function parseVerifyOtpApiError(data: unknown, status: number): string {
 export async function verifyRegistrationOtpApi(
   body: VerifyRegistrationOtpRequest,
 ): Promise<VerifyRegistrationOtpResponse> {
-  const response = await fetch(VERIFY_URL, {
+  const response = await apiFetch(VERIFY_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
