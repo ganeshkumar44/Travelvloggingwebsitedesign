@@ -3,7 +3,8 @@ import { readAuthFromSession } from "../auth/authSession";
 import { apiFetch } from "../../lib/apiFetch";
 import type { UserListItem, UsersListResponse } from "./usersTypes";
 
-const USERS_URL = "http://127.0.0.1:8000/users";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const USERS_URL = `${API_BASE_URL}/users`;
 
 function parseIsVerified(v: unknown): boolean {
   if (v === true) return true;

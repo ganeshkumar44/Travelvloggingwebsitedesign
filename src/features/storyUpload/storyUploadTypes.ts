@@ -5,7 +5,10 @@ export interface StoryCreated {
   title: string;
   description: string;
   location: string;
+  /** AWS S3 URL (or equivalent) returned after upload */
   image: string;
+  /** e.g. `"pending"` after upload */
+  status: string;
   tags: string[];
 }
 

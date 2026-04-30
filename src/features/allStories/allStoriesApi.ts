@@ -2,7 +2,8 @@ import { parseApiErrorMessage } from "../auth/authApi";
 import { apiFetch } from "../../lib/apiFetch";
 import type { AllStoriesResponse } from "./allStoriesTypes";
 
-const ALL_STORIES_URL = "http://127.0.0.1:8000/v1/all-stories";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const ALL_STORIES_URL = `${API_BASE_URL}/v1/all-stories`;
 
 export async function fetchAllStoriesApi(): Promise<AllStoriesResponse> {
   const response = await apiFetch(ALL_STORIES_URL, {

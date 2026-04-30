@@ -22,7 +22,7 @@ import {
 } from "../DashboardFormField";
 import type { AllStoriesItem } from "../../../../features/allStories/allStoriesTypes";
 
-const STORY_IMAGE_BASE = "http://127.0.0.1:8000";
+const STORY_IMAGE_BASE = import.meta.env.VITE_API_BASE_URL as string;
 const MAX_TAGS = 5;
 const TITLE_MAX_LEN = 200;
 

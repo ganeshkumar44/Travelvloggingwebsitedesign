@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Plus } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
 import {
@@ -22,7 +22,7 @@ const TITLE_MAX_LEN = 200;
 
 const STORIES_TAB_LIST = "list" as const;
 const STORIES_TAB_CREATE = "create" as const;
-const STORY_IMAGE_BASE_URL = "http://127.0.0.1:8000";
+const STORY_IMAGE_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 const PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
 
 const IMAGE_REQUIRED_MSG =
@@ -698,10 +698,27 @@ export function StoriesSection() {
           ) : null}
 
           <form
-            className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-[var(--shadow-sm)]"
+            className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 sm:p-8 shadow-[var(--shadow-sm)]"
             onSubmit={onSubmit}
             noValidate
+            aria-busy={isSubmitting}
           >
+            {isSubmitting ? (
+              <div
+                className="absolute inset-0 z-10 flex w-full flex-col items-center justify-center gap-3 rounded-2xl bg-[var(--card)]/85 px-4 backdrop-blur-[2px]"
+                role="status"
+                aria-live="polite"
+              >
+                <Loader2
+                  className="h-10 w-10 shrink-0 animate-spin text-[var(--primary)]"
+                  strokeWidth={2}
+                  aria-hidden
+                />
+                <span className="text-sm font-medium text-[var(--foreground)]">
+                  Uploading…
+                </span>
+              </div>
+            ) : null}
             <div className="grid max-w-full gap-6">
               <div className="w-full space-y-2">
                 <span className="block text-sm font-medium text-[var(--gray-dark)]">

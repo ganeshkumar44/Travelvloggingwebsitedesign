@@ -3,7 +3,7 @@ import { apiFetch } from "../../lib/apiFetch";
 import type { StoryUploadResponse } from "./storyUploadTypes";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const STORIES_UPLOAD_URL = `${API_BASE_URL}/stories/upload`;
+const STORIES_UPLOAD_URL = `${API_BASE_URL}/v1/stories/upload`;
 
 export async function uploadStoryApi(
   accessToken: string,
