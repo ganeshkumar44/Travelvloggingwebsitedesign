@@ -174,22 +174,6 @@ function StoryTableTagsCell({ storyId, tags }: StoryTableTagsCellProps) {
   );
 }
 
-function OrSeparator() {
-  return (
-    <div
-      className="my-1 flex w-full items-center gap-3 py-1"
-      role="separator"
-      aria-orientation="horizontal"
-    >
-      <div className="h-px min-w-0 flex-1 bg-[var(--border)]" />
-      <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
-        OR
-      </span>
-      <div className="h-px min-w-0 flex-1 bg-[var(--border)]" />
-    </div>
-  );
-}
-
 export function StoriesSection() {
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector((s) => s.auth.accessToken);
@@ -206,7 +190,6 @@ export function StoriesSection() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [fileLabel, setFileLabel] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState("");
   const [location, setLocation] = useState("");
   const [tags, setTags] = useState<string[]>([""]);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
@@ -248,7 +231,7 @@ export function StoriesSection() {
 
   const validate = (): boolean => {
     const e: FieldErrors = {};
-    if (!file && !imageUrl.trim()) {
+    if (!file) {
       e.image = IMAGE_REQUIRED_MSG;
     }
     if (!title.trim()) {
@@ -269,7 +252,6 @@ export function StoriesSection() {
     setDescription("");
     setFile(null);
     setFileLabel(null);
-    setImageUrl("");
     setLocation("");
     setTags([""]);
     setFieldErrors({});
@@ -289,7 +271,7 @@ export function StoriesSection() {
         description: description.trim(),
         location: location.trim(),
         file,
-        fileUrl: imageUrl,
+        fileUrl: "",
         tags,
       }),
     );
@@ -754,31 +736,6 @@ export function StoriesSection() {
                     }}
                   />
                 </label>
-              </div>
-
-              <OrSeparator />
-
-              <div className="w-full space-y-2">
-                <DashboardTextField
-                  id="dash-stories-image-url"
-                  label="Upload Image URL"
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => {
-                    setImageUrl(e.target.value);
-                    clearImageError();
-                    if (successMessage) setSuccessMessage(null);
-                    dispatch(clearStoryUploadError());
-                  }}
-                  autoComplete="off"
-                  placeholder="https://"
-                  disabled={isSubmitting}
-                  className={
-                    fieldErrors.image
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/25"
-                      : undefined
-                  }
-                />
                 {fieldErrors.image ? (
                   <p className="text-sm text-red-600" role="alert">
                     {fieldErrors.image}

@@ -22,7 +22,6 @@ import {
 } from "../DashboardFormField";
 import type { AllStoriesItem } from "../../../../features/allStories/allStoriesTypes";
 
-const STORY_IMAGE_BASE = import.meta.env.VITE_API_BASE_URL as string;
 const MAX_TAGS = 5;
 const TITLE_MAX_LEN = 200;
 
@@ -34,31 +33,6 @@ const tagInputClassName = cn(
   "disabled:cursor-not-allowed disabled:opacity-60",
 );
 
-function orSeparator() {
-  return (
-    <div
-      className="my-1 flex w-full items-center gap-3 py-1"
-      role="separator"
-      aria-orientation="horizontal"
-    >
-      <div className="h-px min-w-0 flex-1 bg-[var(--border)]" />
-      <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-[var(--muted-foreground)]">
-        OR
-      </span>
-      <div className="h-px min-w-0 flex-1 bg-[var(--border)]" />
-    </div>
-  );
-}
-
-function getStoryImageUrlForEdit(image: string): string {
-  const trimmed = (image || "").trim();
-  if (!trimmed) return "";
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return trimmed;
-  }
-  return `${STORY_IMAGE_BASE}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
-}
-
 type StoryListModal = "edit" | "delete" | "accept" | "reject" | null;
 
 export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
@@ -67,7 +41,6 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
 
   const [editFile, setEditFile] = useState<File | null>(null);
   const [editFileLabel, setEditFileLabel] = useState<string | null>(null);
-  const [editImageUrl, setEditImageUrl] = useState("");
   const [editLocation, setEditLocation] = useState("");
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -81,7 +54,6 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
     if (activeModal !== "edit") return;
     setEditFile(null);
     setEditFileLabel(null);
-    setEditImageUrl(getStoryImageUrlForEdit(story.image) || "");
     setEditLocation(story.location ?? "");
     setEditTitle(story.title || "");
     setEditDescription(story.description || "");
@@ -197,20 +169,6 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
                     }}
                   />
                 </label>
-              </div>
-
-              {orSeparator()}
-
-              <div className="w-full space-y-2">
-                <DashboardTextField
-                  id={`edit-story-image-url-${story.id}`}
-                  label="Upload Image URL"
-                  type="url"
-                  value={editImageUrl}
-                  onChange={(e) => setEditImageUrl(e.target.value)}
-                  autoComplete="off"
-                  placeholder="https://"
-                />
               </div>
 
               <DashboardTextField
