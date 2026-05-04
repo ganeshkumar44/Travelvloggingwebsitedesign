@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Plus } from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
 import {
@@ -15,7 +15,9 @@ import {
 } from "../../../../features/storyUpload/storyUploadSlice";
 import { fetchAllStories } from "../../../../features/allStories/allStoriesSlice";
 import type { AllStoriesItem } from "../../../../features/allStories/allStoriesTypes";
+import { fetchStoryTags } from "../../../../features/storyTags/storyTagsSlice";
 import { StoryTableRowActions } from "./StoryListActionModals";
+import { CreateStoryTagsField } from "./CreateStoryTagsField";
 
 const MAX_TAGS = 5;
 const TITLE_MAX_LEN = 200;
@@ -27,15 +29,6 @@ const PAGE_SIZE_OPTIONS = [10, 20, 50, 100] as const;
 
 const IMAGE_REQUIRED_MSG =
   "Image is required (upload file or provide URL)";
-
-/** Match `DashboardTextField` input styles (no per-field label for tag rows). */
-const tagInputClassName = cn(
-  "w-full rounded-lg border border-[var(--border)] bg-[var(--input-background)] px-4 py-3 text-base text-[var(--foreground)]",
-  "placeholder:text-[var(--muted-foreground)]",
-  "shadow-sm transition-[box-shadow,border-color]",
-  "focus:border-[var(--primary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/25",
-  "disabled:cursor-not-allowed disabled:opacity-60",
-);
 
 type FieldErrors = {
   image?: string;
@@ -90,6 +83,16 @@ function getStoryImageUrl(image: string): string {
     return trimmed;
   }
   return `${STORY_IMAGE_BASE_URL}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+}
+
+/** Tags sent to the API: selected chips plus optional in-progress draft (manual entry). */
+function mergeTagsForSubmit(selected: string[], draft: string): string[] {
+  const out = [...selected];
+  const t = draft.trim();
+  if (!t || out.length >= MAX_TAGS) return out;
+  if (out.some((x) => x.toLowerCase() === t.toLowerCase())) return out;
+  out.push(t);
+  return out;
 }
 
 const storyTableCell =
@@ -185,13 +188,19 @@ export function StoriesSection() {
     error: storiesError,
     data: storiesData,
   } = useAppSelector((s) => s.allStories);
+  const {
+    status: storyTagsStatus,
+    error: storyTagsError,
+    items: storyTagSuggestions,
+  } = useAppSelector((s) => s.storyTags);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [fileLabel, setFileLabel] = useState<string | null>(null);
   const [location, setLocation] = useState("");
-  const [tags, setTags] = useState<string[]>([""]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [tagDraft, setTagDraft] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [filters, setFilters] = useState<StoryFilters>(INITIAL_STORY_FILTERS);
@@ -200,7 +209,6 @@ export function StoriesSection() {
   const [pageSize, setPageSize] = useState<number>(PAGE_SIZE_OPTIONS[0]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const canAddTag = tags.length < MAX_TAGS;
   const isSubmitting = uploadStatus === "loading";
   const isStoriesLoading = storiesStatus === "loading";
 
@@ -210,18 +218,38 @@ export function StoriesSection() {
     }
   }, [dispatch, storiesStatus]);
 
-  const setTagAt = (index: number, value: string) => {
-    setTags((prev) => prev.map((t, i) => (i === index ? value : t)));
-    if (fieldErrors.tags) {
-      setFieldErrors((e) => ({ ...e, tags: undefined }));
+  useEffect(() => {
+    if (storyTagsStatus === "idle") {
+      void dispatch(fetchStoryTags());
     }
-    if (successMessage) setSuccessMessage(null);
-  };
+  }, [dispatch, storyTagsStatus]);
 
-  const addTagField = () => {
-    if (!canAddTag) return;
-    setTags((prev) => [...prev, ""]);
-  };
+  const commitTag = useCallback((raw: string) => {
+    const t = raw.trim();
+    if (!t) return false;
+    let accepted: string[] | null = null;
+    setSelectedTags((prev) => {
+      if (prev.length >= MAX_TAGS) return prev;
+      if (prev.some((x) => x.toLowerCase() === t.toLowerCase())) return prev;
+      accepted = [...prev, t];
+      return accepted;
+    });
+    if (accepted) {
+      setTagDraft("");
+      setFieldErrors((e) => ({ ...e, tags: undefined }));
+      if (successMessage) setSuccessMessage(null);
+      dispatch(clearStoryUploadError());
+      return true;
+    }
+    return false;
+  }, [dispatch, successMessage]);
+
+  const removeTagAt = useCallback((index: number) => {
+    setSelectedTags((prev) => prev.filter((_, i) => i !== index));
+    setFieldErrors((e) => (e.tags ? { ...e, tags: undefined } : e));
+    if (successMessage) setSuccessMessage(null);
+    dispatch(clearStoryUploadError());
+  }, [dispatch, successMessage]);
 
   const clearImageError = () => {
     if (fieldErrors.image) {
@@ -240,7 +268,8 @@ export function StoriesSection() {
     if (!description.trim()) {
       e.description = "Description is required";
     }
-    if (tags.length > MAX_TAGS) {
+    const tagsForSubmit = mergeTagsForSubmit(selectedTags, tagDraft);
+    if (tagsForSubmit.length > MAX_TAGS) {
       e.tags = "Maximum 5 tags allowed";
     }
     setFieldErrors(e);
@@ -253,7 +282,8 @@ export function StoriesSection() {
     setFile(null);
     setFileLabel(null);
     setLocation("");
-    setTags([""]);
+    setSelectedTags([]);
+    setTagDraft("");
     setFieldErrors({});
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -272,7 +302,7 @@ export function StoriesSection() {
         location: location.trim(),
         file,
         fileUrl: "",
-        tags,
+        tags: mergeTagsForSubmit(selectedTags, tagDraft),
       }),
     );
 
@@ -839,57 +869,40 @@ export function StoriesSection() {
               </div>
 
               <div className="w-full space-y-3">
-                <span
-                  className="block text-sm font-medium text-[var(--gray-dark)]"
-                  id="dash-stories-tags-heading"
-                >
-                  Tags
-                </span>
-                <div
-                  className="flex flex-col gap-3"
-                  role="group"
-                  aria-labelledby="dash-stories-tags-heading"
-                >
-                  {tags.map((value, index) => (
-                    <input
-                      key={index}
-                      id={`dash-stories-tag-${index}`}
-                      type="text"
-                      value={value}
-                      onChange={(e) => setTagAt(index, e.target.value)}
-                      className={cn(
-                        tagInputClassName,
-                        fieldErrors.tags &&
-                          "border-red-500 focus:border-red-500 focus:ring-red-500/25",
-                      )}
-                      placeholder="Enter tag"
-                      autoComplete="off"
-                      disabled={isSubmitting}
-                    />
-                  ))}
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <span
+                    className="block text-sm font-medium text-[var(--gray-dark)]"
+                    id="dash-stories-tags-heading"
+                  >
+                    Tags
+                  </span>
+                  <span className="text-xs text-[var(--muted-foreground)]">
+                    Maximum {MAX_TAGS} tags
+                  </span>
                 </div>
-                {fieldErrors.tags ? (
-                  <p className="text-sm text-red-600" role="alert">
-                    {fieldErrors.tags}
+                {storyTagsStatus === "failed" && storyTagsError ? (
+                  <p className="text-xs text-amber-700 dark:text-amber-500/90" role="status">
+                    Could not load tag suggestions. You can still enter tags manually.
                   </p>
                 ) : null}
-                <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-3">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={addTagField}
-                    disabled={!canAddTag || isSubmitting}
-                  >
-                    <Plus className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-                    Add more tag
-                  </Button>
-                  {!canAddTag ? (
-                    <p className="text-xs text-[var(--muted-foreground)]">
-                      Maximum 5 tags
-                    </p>
-                  ) : null}
-                </div>
+                <CreateStoryTagsField
+                  idPrefix="dash-stories"
+                  aria-labelledby="dash-stories-tags-heading"
+                  selectedTags={selectedTags}
+                  onRemoveTag={removeTagAt}
+                  draft={tagDraft}
+                  onDraftChange={(v) => {
+                    setTagDraft(v);
+                    setFieldErrors((e) => (e.tags ? { ...e, tags: undefined } : e));
+                    if (successMessage) setSuccessMessage(null);
+                    dispatch(clearStoryUploadError());
+                  }}
+                  onCommitTag={commitTag}
+                  suggestionSource={storyTagSuggestions}
+                  fetchStatus={storyTagsStatus}
+                  disabled={isSubmitting}
+                  error={fieldErrors.tags}
+                />
               </div>
             </div>
 

@@ -10,6 +10,7 @@ import verifyForgotPasswordOtpReducer from "../features/verifyForgotPasswordOtp/
 import resetPasswordReducer from "../features/resetPassword/resetPasswordSlice";
 import storyUploadReducer from "../features/storyUpload/storyUploadSlice";
 import allStoriesReducer from "../features/allStories/allStoriesSlice";
+import storyTagsReducer from "../features/storyTags/storyTagsSlice";
 import usersReducer from "../features/users/usersSlice";
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
     resetPassword: resetPasswordReducer,
     storyUpload: storyUploadReducer,
     allStories: allStoriesReducer,
+    storyTags: storyTagsReducer,
     users: usersReducer,
   },
 });
