@@ -1,5 +1,15 @@
 import type { DashboardNavId, DashboardNavNode } from "./types";
 
+/** Canonical URL for each sidebar / dashboard section */
+export const DASHBOARD_SECTION_PATHS: Record<DashboardNavId, string> = {
+  dashboard: "/dashboard",
+  stories: "/dashboard/stories",
+  profile: "/dashboard/profile",
+  accounts: "/dashboard/change-password",
+  closeAccount: "/dashboard/delete-account",
+  users: "/dashboard/users",
+};
+
 export const DASHBOARD_NAV_STRUCTURE: DashboardNavNode[] = [
   { type: "item", id: "dashboard", label: "Dashboard" },
   { type: "item", id: "stories", label: "Stories" },

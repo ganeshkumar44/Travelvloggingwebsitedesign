@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 import { Loader2 } from "lucide-react";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
@@ -16,6 +17,7 @@ import {
 import { fetchAllStories } from "../../../../features/allStories/allStoriesSlice";
 import type { AllStoriesItem } from "../../../../features/allStories/allStoriesTypes";
 import { fetchStoryTags } from "../../../../features/storyTags/storyTagsSlice";
+import { DASHBOARD_SECTION_PATHS } from "../dashboardNav";
 import { StoryTableRowActions } from "./StoryListActionModals";
 import { CreateStoryTagsField } from "./CreateStoryTagsField";
 
@@ -178,6 +180,12 @@ function StoryTableTagsCell({ storyId, tags }: StoryTableTagsCellProps) {
 }
 
 export function StoriesSection() {
+  const routerLocation = useLocation();
+  const navigate = useNavigate();
+  const storiesTabFromPath = routerLocation.pathname.endsWith("/create")
+    ? STORIES_TAB_CREATE
+    : STORIES_TAB_LIST;
+
   const dispatch = useAppDispatch();
   const accessToken = useAppSelector((s) => s.auth.accessToken);
   const { status: uploadStatus, error: uploadError } = useAppSelector(
@@ -386,7 +394,18 @@ export function StoriesSection() {
         </p>
       </div>
 
-      <Tabs defaultValue={STORIES_TAB_LIST} className="w-full">
+      <Tabs
+        value={storiesTabFromPath}
+        onValueChange={(v) => {
+          navigate(
+            v === STORIES_TAB_CREATE
+              ? `${DASHBOARD_SECTION_PATHS.stories}/create`
+              : DASHBOARD_SECTION_PATHS.stories,
+            { replace: true },
+          );
+        }}
+        className="w-full"
+      >
         <TabsList
           className="grid h-auto w-full max-w-xl grid-cols-2 gap-1 p-1"
           aria-label="Stories section"

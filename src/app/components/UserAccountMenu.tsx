@@ -90,7 +90,7 @@ export function UserAccountMenu({
           role="menu"
         >
           <Link
-            to="/dashboard?tab=dashboard"
+            to="/dashboard"
             role="menuitem"
             className={cn(
               "flex w-full min-w-0 items-start gap-2.5 border-b px-4 py-3 text-left text-sm transition-colors",
@@ -129,7 +129,7 @@ export function UserAccountMenu({
             </span>
           </Link>
           <Link
-            to="/dashboard?tab=profile"
+            to="/dashboard/profile"
             role="menuitem"
             className={cn(
               "flex w-full items-center gap-2.5 border-b px-4 py-3 text-left text-sm font-medium transition-colors",

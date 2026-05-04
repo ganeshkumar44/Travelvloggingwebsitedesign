@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, Outlet } from "react-router";
+import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import { ReactNode } from "react";
 import { InactivityLogoutMonitor } from "./components/InactivityLogoutMonitor";
 import Home from "./pages/Home";
@@ -13,6 +13,12 @@ import Register from './pages/Register';
 import RegisterOtp from './pages/RegisterOtp';
 import ForgotPassword from './pages/ForgotPassword';
 import Dashboard from './pages/Dashboard';
+import { AccountsSection } from './components/dashboard/sections/AccountsSection';
+import { CloseAccountSection } from './components/dashboard/sections/CloseAccountSection';
+import { DashboardHomeSection } from './components/dashboard/sections/DashboardHomeSection';
+import { ProfileDetailsSection } from './components/dashboard/sections/ProfileDetailsSection';
+import { StoriesSection } from './components/dashboard/sections/StoriesSection';
+import { UsersSection } from './components/dashboard/sections/UsersSection';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
@@ -141,6 +147,16 @@ export const router = createBrowserRouter([
             </ProtectedRoute>
           </Layout>
         ),
+        children: [
+          { index: true, element: <DashboardHomeSection /> },
+          { path: "stories", element: <StoriesSection /> },
+          { path: "stories/create", element: <StoriesSection /> },
+          { path: "profile", element: <ProfileDetailsSection /> },
+          { path: "change-password", element: <AccountsSection /> },
+          { path: "delete-account", element: <CloseAccountSection /> },
+          { path: "users", element: <UsersSection /> },
+          { path: "*", element: <Navigate to="/dashboard" replace /> },
+        ],
       },
       {
         path: "*",
