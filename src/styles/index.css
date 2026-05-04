@@ -104,3 +104,47 @@ html {
 .prose h3:first-child {
   margin-top: 0;
 }
+
+/* Dashboard > Stories > Create — React Quill description */
+.create-story-description-quill .ql-toolbar.ql-snow {
+  border: none;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: var(--input-background);
+  font-family: inherit;
+}
+.create-story-description-quill .ql-container.ql-snow {
+  border: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+.create-story-description-quill .ql-editor {
+  min-height: 12rem;
+  max-height: 28rem;
+  overflow-y: auto;
+}
+.create-story-description-quill .ql-editor.ql-blank::before {
+  color: var(--muted-foreground);
+  font-style: normal;
+}
+/* ql-snow and ql-toolbar are on the same div — use .ql-toolbar.ql-snow, not .ql-snow .ql-toolbar */
+.create-story-description-quill .ql-toolbar.ql-snow button.ql-emoji::before {
+  content: "😀";
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+  top: -3px;
+  position: relative;
+}
+.create-story-description-quill .ql-toolbar.ql-snow button.ql-insertTable::before {
+  content: "▦";
+  display: inline-block;
+  font-size: 0.95rem;
+  line-height: 1;
+  top: -4px;
+  position: relative;
+}
+.create-story-description-quill .ql-editor .story-quill-table td {
+  vertical-align: top;
+}

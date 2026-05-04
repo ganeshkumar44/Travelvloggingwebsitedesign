@@ -3,10 +3,7 @@ import { useLocation, useNavigate } from "react-router";
 import { Loader2 } from "lucide-react";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
-import {
-  DashboardTextareaField,
-  DashboardTextField,
-} from "../DashboardFormField";
+import { DashboardTextField } from "../DashboardFormField";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
 import {
@@ -20,6 +17,8 @@ import { fetchStoryTags } from "../../../../features/storyTags/storyTagsSlice";
 import { DASHBOARD_SECTION_PATHS } from "../dashboardNav";
 import { StoryTableRowActions } from "./StoryListActionModals";
 import { CreateStoryTagsField } from "./CreateStoryTagsField";
+import { CreateStoryDescriptionEditor } from "./CreateStoryDescriptionEditor";
+import { stripHtmlToPlainText } from "../../../../lib/htmlPlainText";
 
 const MAX_TAGS = 5;
 const TITLE_MAX_LEN = 200;
@@ -273,7 +272,7 @@ export function StoriesSection() {
     if (!title.trim()) {
       e.title = "Title is required";
     }
-    if (!description.trim()) {
+    if (!stripHtmlToPlainText(description)) {
       e.description = "Description is required";
     }
     const tagsForSubmit = mergeTagsForSubmit(selectedTags, tagDraft);
@@ -846,12 +845,12 @@ export function StoriesSection() {
               </div>
 
               <div className="w-full space-y-1.5">
-                <DashboardTextareaField
+                <CreateStoryDescriptionEditor
                   id="dash-stories-description"
                   label="Description"
                   value={description}
-                  onChange={(e) => {
-                    setDescription(e.target.value);
+                  onChange={(html) => {
+                    setDescription(html);
                     if (fieldErrors.description) {
                       setFieldErrors((er) => ({
                         ...er,
@@ -861,13 +860,9 @@ export function StoriesSection() {
                     if (successMessage) setSuccessMessage(null);
                     dispatch(clearStoryUploadError());
                   }}
-                  rows={5}
                   disabled={isSubmitting}
-                  className={
-                    fieldErrors.description
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500/25"
-                      : undefined
-                  }
+                  error={Boolean(fieldErrors.description)}
+                  placeholder="Write your story description…"
                 />
                 <div className="flex items-center justify-between gap-3">
                   <p className="min-w-0 text-xs italic text-[var(--muted-foreground)]">
@@ -877,7 +872,7 @@ export function StoriesSection() {
                     className="shrink-0 text-xs tabular-nums text-[var(--muted-foreground)]"
                     aria-live="polite"
                   >
-                    {description.length}
+                    {stripHtmlToPlainText(description).length}
                   </span>
                 </div>
                 {fieldErrors.description ? (
