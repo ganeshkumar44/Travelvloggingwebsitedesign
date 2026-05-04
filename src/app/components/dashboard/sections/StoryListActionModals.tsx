@@ -1,7 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import { MoreVertical, Plus } from "lucide-react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Loader2, MoreVertical, Plus } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "../../Button";
 import { cn } from "../../ui/utils";
+import { useAppDispatch, useAppSelector } from "../../../../store/hooks";
+import {
+  clearStoryStatusUpdateError,
+  updateStoryStatus,
+} from "../../../../features/storyStatusUpdate/storyStatusUpdateSlice";
+import type { StoryStatusUpdateRequestStatus } from "../../../../features/storyStatusUpdate/storyStatusUpdateTypes";
+import { isAdminRole } from "../dashboardUtils";
 import {
   Dialog,
   DialogContent,
@@ -36,6 +44,16 @@ const tagInputClassName = cn(
 type StoryListModal = "edit" | "delete" | "accept" | "reject" | null;
 
 export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
+  const dispatch = useAppDispatch();
+  const accessToken = useAppSelector((s) => s.auth.accessToken);
+  const role = useAppSelector((s) => s.auth.role);
+  const { status: statusUpdateSliceStatus, pendingStoryId } = useAppSelector(
+    (s) => s.storyStatusUpdate,
+  );
+  const isAdmin = useMemo(() => isAdminRole(role), [role]);
+  const isBusy =
+    statusUpdateSliceStatus === "loading" && pendingStoryId === story.id;
+
   const [activeModal, setActiveModal] = useState<StoryListModal>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -75,11 +93,37 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
   };
 
   const openModal = (m: Exclude<StoryListModal, null>) => {
+    if (m === "delete" || m === "accept" || m === "reject") {
+      dispatch(clearStoryStatusUpdateError());
+    }
     setActiveModal(m);
   };
 
   const closeModals = () => {
     setActiveModal(null);
+  };
+
+  const runStatusUpdate = async (status: StoryStatusUpdateRequestStatus) => {
+    if (!accessToken) {
+      toast.error("Not signed in");
+      return;
+    }
+    dispatch(clearStoryStatusUpdateError());
+    try {
+      const result = await dispatch(
+        updateStoryStatus({
+          accessToken,
+          storyId: story.id,
+          status,
+        }),
+      ).unwrap();
+      toast.success(
+        (result.message && result.message.trim()) || "Updated successfully",
+      );
+      closeModals();
+    } catch (e) {
+      toast.error(typeof e === "string" ? e : "Request failed");
+    }
   };
 
   return (
@@ -88,28 +132,51 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30"
+            disabled={isBusy}
+            className={cn(
+              "inline-flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-md text-[var(--foreground)] transition-colors hover:bg-[var(--muted)]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]/30",
+              isBusy && "cursor-wait opacity-70",
+            )}
             aria-label="Open story actions"
           >
-            <MoreVertical className="h-4 w-4" strokeWidth={2} aria-hidden />
+            {isBusy ? (
+              <Loader2
+                className="h-4 w-4 shrink-0 animate-spin"
+                strokeWidth={2}
+                aria-hidden
+              />
+            ) : (
+              <MoreVertical className="h-4 w-4" strokeWidth={2} aria-hidden />
+            )}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="min-w-[10rem]">
           <DropdownMenuItem onSelect={() => openModal("edit")}>
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onSelect={() => openModal("delete")}
-            variant="destructive"
-          >
-            Delete
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => openModal("accept")}>
-            Accept
-          </DropdownMenuItem>
-          <DropdownMenuItem onSelect={() => openModal("reject")}>
-            Reject
-          </DropdownMenuItem>
+          {isAdmin ? (
+            <>
+              <DropdownMenuItem
+                onSelect={() => openModal("delete")}
+                variant="destructive"
+                disabled={isBusy}
+              >
+                Delete
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => openModal("accept")}
+                disabled={isBusy}
+              >
+                Accept
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => openModal("reject")}
+                disabled={isBusy}
+              >
+                Reject
+              </DropdownMenuItem>
+            </>
+          ) : null}
         </DropdownMenuContent>
       </DropdownMenu>
 
@@ -299,20 +366,32 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
             </DialogDescription>
           </DialogHeader>
           <p className="text-sm leading-relaxed text-[var(--foreground)]">
-            Are you sure you want to delete this story? If deleted, it will not
-            be visible in the future.
+            Are you sure you want to delete this story?
           </p>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={closeModals}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={closeModals}
+              disabled={isBusy}
+            >
               Cancel
             </Button>
             <Button
               type="button"
               variant="primary"
               className="border-2 border-red-600 bg-red-100 text-red-600 hover:bg-red-50 dark:bg-red-950/30 dark:hover:bg-red-950/20"
-              onClick={closeModals}
+              disabled={isBusy}
+              onClick={() => void runStatusUpdate("deleted")}
             >
-              Delete
+              {isBusy ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  Delete
+                </span>
+              ) : (
+                "Delete"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -332,15 +411,31 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
             </DialogDescription>
           </DialogHeader>
           <p className="text-sm leading-relaxed text-[var(--foreground)]">
-            Please review the story before approving. Click Accept to approve
-            this story.
+            Are you sure you want to approve this story?
           </p>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={closeModals}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={closeModals}
+              disabled={isBusy}
+            >
               Cancel
             </Button>
-            <Button type="button" variant="primary" onClick={closeModals}>
-              Accept
+            <Button
+              type="button"
+              variant="primary"
+              disabled={isBusy}
+              onClick={() => void runStatusUpdate("approved")}
+            >
+              {isBusy ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  Accept
+                </span>
+              ) : (
+                "Accept"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -360,20 +455,32 @@ export function StoryTableRowActions({ story }: { story: AllStoriesItem }) {
             </DialogDescription>
           </DialogHeader>
           <p className="text-sm leading-relaxed text-[var(--foreground)]">
-            Please review the story before rejecting. Click Reject to reject
-            this story.
+            Are you sure you want to reject this story?
           </p>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={closeModals}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={closeModals}
+              disabled={isBusy}
+            >
               Cancel
             </Button>
             <Button
               type="button"
               variant="primary"
               className="border-2 border-red-600 bg-red-100 text-red-600 hover:bg-red-50 dark:bg-red-950/30 dark:hover:bg-red-950/20"
-              onClick={closeModals}
+              disabled={isBusy}
+              onClick={() => void runStatusUpdate("rejected")}
             >
-              Reject
+              {isBusy ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                  Reject
+                </span>
+              ) : (
+                "Reject"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

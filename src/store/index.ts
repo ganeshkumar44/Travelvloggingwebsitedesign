@@ -11,6 +11,7 @@ import resetPasswordReducer from "../features/resetPassword/resetPasswordSlice";
 import storyUploadReducer from "../features/storyUpload/storyUploadSlice";
 import allStoriesReducer from "../features/allStories/allStoriesSlice";
 import storyTagsReducer from "../features/storyTags/storyTagsSlice";
+import storyStatusUpdateReducer from "../features/storyStatusUpdate/storyStatusUpdateSlice";
 import usersReducer from "../features/users/usersSlice";
 
 export const store = configureStore({
@@ -27,6 +28,7 @@ export const store = configureStore({
     storyUpload: storyUploadReducer,
     allStories: allStoriesReducer,
     storyTags: storyTagsReducer,
+    storyStatusUpdate: storyStatusUpdateReducer,
     users: usersReducer,
   },
 });
